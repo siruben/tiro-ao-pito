@@ -448,7 +448,7 @@ body {
   /* Para telemóveis em portrait */
   
   #hud {
-    top: 40px !important;
+    top: 90px !important;
   }
   
   #vidasBar {
