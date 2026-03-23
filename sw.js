@@ -2,17 +2,17 @@ const CACHE = "tiro-ao-pito-v1";
 const FICHEIROS = [
   "/tiro-ao-pito/",
   "/tiro-ao-pito/index.html",
-  "/style.css",
-  "/script.js",
-  "/poster.png",
-  "/pito.png",
-  "/gordo.png",
-  "/magro.png",
-  "/careca.png",
-  "/cabeludo.png",
-  "/intro.mp3",
-  "/feira.mp3",
-  "/tiro.mp3"
+  "/tiro-ao-pito/style.css",
+  "/tiro-ao-pito/script.js",
+  "/tiro-ao-pito/poster.png",
+  "/tiro-ao-pito/pito.png",
+  "/tiro-ao-pito/gordo.png",
+  "/tiro-ao-pito/magro.png",
+  "/tiro-ao-pito/careca.png",
+  "/tiro-ao-pito/cabeludo.png",
+  "/tiro-ao-pito/intro.mp3",
+  "/tiro-ao-pito/feira.mp3",
+  "/tiro-ao-pito/tiro.mp3"
 ];
 
 // Instala e guarda ficheiros em cache
