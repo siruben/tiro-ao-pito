@@ -23,9 +23,16 @@ body {
 /* Contentor portrait — mantém proporção 2:3 centrado no ecrã */
 #wrapper {
   position: relative;
-  width: min(100vw, calc(100vh * 0.667));
-  height: min(100vh, calc(100vw * 1.5));
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
+}
+
+@media (orientation: landscape) {
+  #wrapper {
+    width: calc(100vh * 0.667);
+    height: 100vh;
+  }
 }
 
 /* ─── MENU ──────────────────────────────────────────────────────────────────── */
