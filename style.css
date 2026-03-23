@@ -33,11 +33,15 @@ body {
     height: 100vh;
 
 /* ─── MENU ──────────────────────────────────────────────────────────────────── */
+#menu, #game {
+  background-color: #1a0800;
+}
 #menu {
   width: 100%;
   height: 100%;
   position: relative;
-  background: url("poster.png") center/100% 100%;
+  background: url("poster.png") center center no-repeat;
+background-size: contain;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -75,7 +79,8 @@ body {
 #game {
   width: 100%;
   height: 100%;
-  background: url("poster.png") center/100% 100%;
+  background: url("poster.png") center center no-repeat;
+background-size: contain;
   position: relative;
   overflow: hidden;
 }
