@@ -1,0 +1,444 @@
+/* ─── IMPORTS ───────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800&display=swap');
+
+/* ─── BASE ──────────────────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  overflow: hidden;
+  user-select: none;
+  background: #1a0a00;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Contentor portrait — mantém proporção 2:3 centrado no ecrã */
+#wrapper {
+  position: relative;
+  width: min(100vw, calc(100vh * 0.667));
+  height: min(100vh, calc(100vw * 1.5));
+  overflow: hidden;
+}
+
+/* ─── MENU ──────────────────────────────────────────────────────────────────── */
+#menu {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: url("poster.png") center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 8vh;
+}
+
+#btnJogar {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(20px, 5vw, 30px);
+  padding: 16px 56px;
+  border-radius: 14px;
+  border: 4px solid #fff3d1;
+  background: linear-gradient(180deg, #ff4e00, #c62000);
+  color: #fff3d1;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #7a0000, 0 8px 20px rgba(0,0,0,0.5);
+  transition: transform 0.12s, box-shadow 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+#btnJogar:hover  { transform: translateX(-50%) translateY(-3px); box-shadow: 0 9px 0 #7a0000; }
+#btnJogar:active { transform: translateX(-50%) translateY(3px);  box-shadow: 0 3px 0 #7a0000; }
+
+
+
+/* ─── JOGO ──────────────────────────────────────────────────────────────────── */
+#game {
+  width: 100%;
+  height: 100%;
+  background: url("poster.png") center/cover no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── HUD ───────────────────────────────────────────────────────────────────── */
+#hud {
+  position: absolute;
+  top: 130px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 10;
+}
+
+.hud-box {
+  background: linear-gradient(180deg, #c62000, #7a0000);
+  color: #FFE033;
+  padding: 6px 20px 8px;
+  border-radius: 12px;
+  border: 3px solid #fff3d1;
+  box-shadow: 0 5px 0 #3d0000, 0 6px 16px rgba(0,0,0,0.5);
+  text-align: center;
+  min-width: 90px;
+  font-family: 'Lilita One', cursive;
+}
+
+.hud-label {
+  display: block;
+  font-size: clamp(10px, 2.5vw, 13px);
+  letter-spacing: 2px;
+  color: #ffd0a0;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.hud-value {
+  display: block;
+  font-size: clamp(26px, 7vw, 36px);
+  line-height: 1;
+  text-shadow: 2px 2px 0 #7a0000;
+}
+
+/* ─── MENSAGEM DE AVISO ─────────────────────────────────────────────────────── */
+#mensagem {
+  position: absolute;
+  bottom: 16%;
+  width: 100%;
+  text-align: center;
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(20px, 5vw, 32px);
+  color: #fff3d1;
+  text-shadow: 2px 2px 0 #b85c00, 4px 4px 10px rgba(0,0,0,0.7);
+  background: linear-gradient(90deg, transparent, rgba(160,50,0,0.88), transparent);
+  padding: 10px 0;
+  display: none;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* ─── PITO ──────────────────────────────────────────────────────────────────── */
+.pito {
+  position: absolute;
+  /* tamanho relativo ao ecrã — fica proporcional em mobile e PC */
+  width: clamp(60px, 14vw, 110px);
+  cursor: crosshair;
+  animation: aparecer 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  z-index: 5;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55));
+  transform-origin: bottom center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pito img {
+  width: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+@keyframes aparecer {
+  from { transform: scale(0) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);    opacity: 1; }
+}
+
+/* ─── OLHO ──────────────────────────────────────────────────────────────────── */
+.olho {
+  position: absolute;
+  /* Ajustado ao olho do pito.png — afina se necessário */
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  top: 18%;
+  left: 30%;
+  cursor: no-drop;
+  /* descomenta para depurar a posição do olho:
+  background: rgba(255,0,0,0.3); */
+}
+
+/* ─── ACERTO ────────────────────────────────────────────────────────────────── */
+.pito.acertado {
+  animation: acerto 0.18s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes acerto {
+  0%   { transform: scale(1);   opacity: 1; filter: drop-shadow(0 0 0px #fff); }
+  50%  { transform: scale(1.4); opacity: 1; filter: drop-shadow(0 0 14px #fff) brightness(2.5); }
+  100% { transform: scale(0.5); opacity: 0; }
+}
+
+/* ─── SAÍDA SEM CLIQUE ──────────────────────────────────────────────────────── */
+.pito.a-sair {
+  animation: sair 0.22s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes sair {
+  from { transform: scale(1) translateY(0);    opacity: 1; }
+  to   { transform: scale(0) translateY(20px); opacity: 0; }
+}
+
+/* ─── ECRÃ DE FIM DO JOGO ───────────────────────────────────────────────────── */
+#gameOver {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.80);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#gameOverBox {
+  background: linear-gradient(180deg, #5c2a00, #3b1200);
+  color: #fff3d1;
+  text-align: center;
+  padding: 44px 56px 48px;
+  border-radius: 22px;
+  border: 5px solid #ffcc00;
+  box-shadow: 0 8px 0 #7a2e00, 0 12px 40px rgba(0,0,0,0.7);
+  animation: slideUp 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+  max-width: 380px;
+  width: 88vw;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px) scale(0.9); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);   opacity: 1; }
+}
+
+#gameOverBox h1 {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(30px, 8vw, 46px);
+  color: #FFE033;
+  text-shadow: 3px 3px 0 #b85c00, 5px 5px 0 #7a2e00;
+  margin-bottom: 12px;
+}
+
+#gameOverBox p {
+  font-size: 18px;
+  color: #ffd0a0;
+  margin-bottom: 6px;
+}
+
+#gameOverBox strong {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(40px, 12vw, 58px);
+  color: #FFE033;
+  text-shadow: 2px 2px 0 #b85c00, 0 0 14px rgba(255,200,0,0.5);
+  display: block;
+  line-height: 1;
+  margin-bottom: 28px;
+}
+
+#gameOverBox button {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(18px, 4vw, 22px);
+  padding: 14px 40px;
+  border-radius: 12px;
+  border: 3px solid #fff3d1;
+  background: linear-gradient(180deg, #ff4e00, #c62000);
+  color: #fff3d1;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #7a0000, 0 7px 16px rgba(0,0,0,0.4);
+  transition: transform 0.12s, box-shadow 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#gameOverBox button:hover  { transform: translateY(-3px); box-shadow: 0 8px 0 #7a0000; }
+#gameOverBox button:active { transform: translateY(3px);  box-shadow: 0 2px 0 #7a0000; }
+
+
+
+
+/* ─── PITOS NO MENU ────────────────────────────────────────────────────────── */
+.menu-pito {
+  position: absolute;
+  width: clamp(60px, 14vw, 100px);
+  transform: translateX(-50%);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  pointer-events: none;
+  animation: aparecer 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.menu-pito:nth-of-type(1) { animation-delay: 0.0s; }
+.menu-pito:nth-of-type(2) { animation-delay: 0.1s; }
+.menu-pito:nth-of-type(3) { animation-delay: 0.2s; }
+.menu-pito:nth-of-type(4) { animation-delay: 0.3s; }
+.menu-pito:nth-of-type(5) { animation-delay: 0.4s; }
+
+/* ─── BADGES DE NOME NO MENU ────────────────────────────────────────────────── */
+.menu-badge {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(11px, 3vw, 15px);
+  color: #3b1200;
+  background: #FFE033;
+  border: 2px solid #b85c00;
+  border-radius: 20px;
+  padding: 2px 10px;
+  box-shadow: 0 2px 0 #b85c00;
+  white-space: nowrap;
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* ─── BOTÃO SOM ─────────────────────────────────────────────────────────────── */
+#btnSom {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: clamp(20px, 5vw, 28px);
+  background: rgba(0,0,0,0.45);
+  border: 2px solid rgba(255,220,100,0.5);
+  border-radius: 50%;
+  width: clamp(40px, 10vw, 52px);
+  height: clamp(40px, 10vw, 52px);
+  cursor: pointer;
+  z-index: 20;
+  transition: transform 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#btnSom:hover  { background: rgba(0,0,0,0.65); transform: scale(1.1); }
+#btnSom:active { transform: scale(0.9); }
+
+/* ─── RECORDE NO FIM DO JOGO ────────────────────────────────────────────────── */
+#recordTexto {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(14px, 4vw, 18px);
+  color: #FFE033;
+  text-shadow: 1px 1px 0 #b85c00;
+  margin-bottom: 20px;
+}
+
+/* ─── PONTOS VOADORES ───────────────────────────────────────────────────────── */
+.pontos-voadores {
+  position: absolute;
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(22px, 7vw, 36px);
+  pointer-events: none;
+  z-index: 50;
+  transform: translateX(-50%);
+  animation: voar 1s ease forwards;
+  white-space: nowrap;
+}
+
+.pontos-voadores.positivo {
+  color: #FFE033;
+  text-shadow: 2px 2px 0 #b85c00, 0 0 10px rgba(255,200,0,0.6);
+}
+
+.pontos-voadores.negativo {
+  color: #ff4444;
+  text-shadow: 2px 2px 0 #7a0000, 0 0 10px rgba(255,0,0,0.5);
+}
+
+@keyframes voar {
+  0%   { transform: translateX(-50%) translateY(0px);   opacity: 1; }
+  60%  { transform: translateX(-50%) translateY(-60px); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-90px); opacity: 0; }
+}
+
+/* ─── NÍVEL NO HUD ───────────────────────────────────────────────────────────── */
+.hud-nivel {
+  background: linear-gradient(180deg, #007a00, #004d00) !important;
+  border-color: #aaffaa !important;
+  box-shadow: 0 5px 0 #002200, 0 6px 16px rgba(0,0,0,0.5) !important;
+}
+
+/* ─── OVERLAY DE TRANSIÇÃO DE NÍVEL ─────────────────────────────────────────── */
+#nivelOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 90;
+}
+
+#nivelBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+#nivelTexto {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(48px, 14vw, 80px);
+  color: #FFE033;
+  text-shadow:
+    4px 4px 0 #b85c00,
+    7px 7px 0 #7a2e00,
+    0 0 30px rgba(255,180,0,0.7);
+  display: block;
+}
+
+#nivelSub {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(18px, 5vw, 26px);
+  color: #fff3d1;
+  text-shadow: 2px 2px 6px #000;
+  display: block;
+}
+
+.a-entrar-nivel {
+  animation: entrarNivel 0.3s ease forwards;
+}
+
+.a-sair-nivel {
+  animation: sairNivel 0.4s ease forwards;
+}
+
+@keyframes entrarNivel {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes sairNivel {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ─── BARRA DE VIDAS ────────────────────────────────────────────────────────── */
+#vidasBar {
+  position: absolute;
+  top: 475px;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#vidas {
+  font-size: clamp(18px, 5vw, 28px);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+  letter-spacing: 4px;
+}

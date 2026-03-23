@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Tiro ao Pito</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a0a00">
+</head>
+<body>
+<div id="wrapper">
+
+  <!-- ── MENU ─────────────────────────────────────────────────────────────── -->
+  <div id="menu">
+
+    <!-- Pitos nos ninhos (só imagem, sem pontos) -->
+    <img class="menu-pito" id="mp-gordo"    src="gordo.png"    style="left:11%; top:55%;">
+    <img class="menu-pito" id="mp-pito"     src="pito.png"     style="left:40%; top:35%;">
+    <img class="menu-pito" id="mp-magro"    src="magro.png"    style="left:70%; top:42%;">
+    <img class="menu-pito" id="mp-careca"   src="careca.png"   style="left:6%;  top:42%;">
+    <img class="menu-pito" id="mp-cabeludo" src="cabeludo.png" style="left:65%; top:55%;">
+
+    <!-- Nomes em badge -->
+    <span class="menu-badge" style="left:11%; top:68%;">Gordo</span>
+    <span class="menu-badge" style="left:50%; top:48%;">Pito</span>
+    <span class="menu-badge" style="left:70%; top:50%;">Magro</span>
+    <span class="menu-badge" style="left:10%;  top:55%;">Careca</span>
+    <span class="menu-badge" style="left:65%; top:68%;">Cabeludo</span>
+
+    <!-- Botão som -->
+    <button id="btnSom" onclick="toggleSom()">🔊</button>
+
+    <!-- Botão jogar -->
+    <button id="btnJogar" onclick="startGame()">JOGAR</button>
+
+  </div>
+
+  <!-- ── ÁUDIOS ────────────────────────────────────────────────────────────── -->
+  <audio id="introMusic" src="intro.mp3"></audio>
+  <audio id="gameMusic"  src="feira.mp3" loop></audio>
+  <audio id="tiro"       src="tiro.mp3"></audio>
+
+  <!-- ── JOGO ──────────────────────────────────────────────────────────────── -->
+  <div id="game" style="display:none;">
+    <div id="hud">
+      <div class="hud-box">
+        <span class="hud-label">PONTOS</span>
+        <span class="hud-value" id="score">0</span>
+      </div>
+      <div class="hud-box hud-nivel">
+        <span class="hud-label">NÍVEL</span>
+        <span class="hud-value" id="nivel">1</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">TEMPO</span>
+        <span class="hud-value" id="time">30</span>
+      </div>
+    </div>
+    <div id="vidasBar">
+      <span id="vidas">🐣🐣🐣🐣🐣</span>
+    </div>
+
+    <!-- Overlay de transição entre níveis -->
+    <div id="nivelOverlay" style="display:none;">
+      <div id="nivelBox">
+        <span id="nivelTexto">NÍVEL 2!</span>
+      </div>
+    </div>
+    <div id="mensagem"></div>
+  </div>
+
+  <!-- ── FIM DO JOGO ───────────────────────────────────────────────────────── -->
+  <div id="gameOver" style="display:none;">
+    <div id="gameOverBox">
+      <h1 id="gameOverTitulo">FIM DO JOGO!</h1>
+      <strong><span id="finalScore">0</span> pts</strong>
+      <p id="recordTexto"></p>
+      <button onclick="location.reload()">Jogar de novo</button>
+    </div>
+  </div>
+
+
+</div><!-- /#wrapper -->
+<script src="script.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/tiro-ao-pito/sw.js").catch(() => {});
+  }
+</script>
+</body>
+</html>
