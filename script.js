@@ -54,8 +54,9 @@ function toggleSom() {
 
 // ─── ÁUDIO ────────────────────────────────────────────────────────────────────
 function tocarTiro() {
-  tiro.currentTime = 0;
-  tiro.play();
+  // Desabilitado para não reiniciar a música de fundo
+  // tiro.currentTime = 0;
+  // tiro.play();
 }
 
 // ─── INTRO ────────────────────────────────────────────────────────────────────
