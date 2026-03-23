@@ -59,10 +59,24 @@ function tocarTiro() {
 }
 
 // ─── INTRO ────────────────────────────────────────────────────────────────────
-window.onload = () => {
+function iniciarIntro() {
   introMusic.volume = 0.6;
   introMusic.play().catch(() => {});
+}
+
+window.onload = () => {
+  iniciarIntro();
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(iniciarIntro, 100);
+});
+
+document.addEventListener("click", () => {
+  if (introMusic.paused && !estado.jogoAtivo) {
+    iniciarIntro();
+  }
+}, { once: true });
 
 // ─── INÍCIO DO JOGO ───────────────────────────────────────────────────────────
 function startGame() {
