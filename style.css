@@ -442,3 +442,25 @@ body {
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
   letter-spacing: 4px;
 }
+
+/* ─── MOBILE RESPONSIVO ────────────────────────────────────────────────────── */
+@media (max-width: 768px) and (min-aspect-ratio: 9/16) {
+  /* Para telemóveis em portrait */
+  
+  #hud {
+    top: 40px !important;
+  }
+  
+  #vidasBar {
+    top: 300px !important;
+  }
+  
+  #mensagem {
+    bottom: 20%;
+  }
+  
+  .pito {
+    /* Aumentar um pouco o tamanho no mobile */
+    width: clamp(70px, 18vw, 100px) !important;
+  }
+}
