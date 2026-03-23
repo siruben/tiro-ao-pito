@@ -463,4 +463,11 @@ body {
     /* Aumentar um pouco o tamanho no mobile */
     width: clamp(70px, 18vw, 100px) !important;
   }
+  
+  /* Reposicionar pitos por slot no mobile */
+  .pito[data-slot-id="0"] { left: 8% !important;  top: 45% !important; }
+  .pito[data-slot-id="1"] { left: 40% !important; top: 38% !important; }
+  .pito[data-slot-id="2"] { left: 72% !important; top: 45% !important; }
+  .pito[data-slot-id="3"] { left: 14% !important; top: 60% !important; }
+  .pito[data-slot-id="4"] { left: 71% !important; top: 60% !important; }
 }

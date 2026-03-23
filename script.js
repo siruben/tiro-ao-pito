@@ -183,6 +183,7 @@ function criarPito() {
 
   const pito = document.createElement("div");
   pito.className = "pito";
+  pito.setAttribute("data-slot-id", slot.id);
   pito.style.left = slot.left;
   pito.style.top  = slot.top;
 
