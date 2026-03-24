@@ -1,60 +1,3 @@
-// ─── ORIENTAÇÃO ──────────────────────────────────────────────────────────────
-function forcarPortrait() {
-  // Tentar usar Screen Orientation API
-  if (screen.orientation && screen.orientation.lock) {
-    screen.orientation.lock('portrait-primary').catch(() => {});
-  }
-  // Verificação imediata
-  verificarOrientacao();
-}
-
-function verificarOrientacao() {
-  const isPortrait = window.innerHeight > window.innerWidth;
-  const isLandscape = !isPortrait;
-  
-  if (isLandscape) {
-    // Mostrar mensagem de rotação
-    mostrarAviso();
-  } else {
-    // Remover aviso se existir
-    const aviso = document.getElementById('orientationAviso');
-    if (aviso) aviso.remove();
-  }
-}
-
-function mostrarAviso() {
-  // Verificar se já existe
-  if (document.getElementById('orientationAviso')) return;
-  
-  const aviso = document.createElement('div');
-  aviso.id = 'orientationAviso';
-  aviso.style.cssText = `
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.95);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    z-index: 99999;
-    font-family: 'Lilita One', cursive;
-    color: #FFE033;
-  `;
-  
-  aviso.innerHTML = `
-    <div style="padding: 40px; text-align: center;">
-      <h1 style="font-size: 3rem; margin-bottom: 20px;">📱</h1>
-      <h2 style="font-size: 2rem; margin-bottom: 20px; color: #fff3d1;">Vire o telefone!</h2>
-      <p style="font-size: 1.3rem; color: #ffd0a0; margin: 0;">Este jogo só funciona em modo retrato</p>
-      <p style="font-size: 1rem; color: #b8860b; margin-top: 20px;">⬅ Gire para a esquerda ➜</p>
-    </div>
-  `;
-  
-  document.body.appendChild(aviso);
-}
-
 // ─── TIPOS DE PITO ───────────────────────────────────────────────────────────
 const PITOS = [
   { img: "pito.png",     pontos: 10 },
@@ -111,30 +54,15 @@ function toggleSom() {
 
 // ─── ÁUDIO ────────────────────────────────────────────────────────────────────
 function tocarTiro() {
-  // Desabilitado para não reiniciar a música de fundo
-  // tiro.currentTime = 0;
-  // tiro.play();
+  tiro.currentTime = 0;
+  tiro.play();
 }
 
 // ─── INTRO ────────────────────────────────────────────────────────────────────
-function iniciarIntro() {
+window.onload = () => {
   introMusic.volume = 0.6;
   introMusic.play().catch(() => {});
-}
-
-window.onload = () => {
-  iniciarIntro();
 };
-
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(iniciarIntro, 100);
-});
-
-document.addEventListener("click", () => {
-  if (introMusic.paused && !estado.jogoAtivo) {
-    iniciarIntro();
-  }
-}, { once: true });
 
 // ─── INÍCIO DO JOGO ───────────────────────────────────────────────────────────
 function startGame() {
@@ -240,7 +168,6 @@ function criarPito() {
 
   const pito = document.createElement("div");
   pito.className = "pito";
-  pito.setAttribute("data-slot-id", slot.id);
   pito.style.left = slot.left;
   pito.style.top  = slot.top;
 
@@ -355,17 +282,3 @@ function terminarJogo(perdeu = false) {
   document.getElementById("game").style.display     = "none";
   document.getElementById("gameOver").style.display = "flex";
 }
-
-// ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  forcarPortrait();
-  verificarOrientacao();
-});
-
-window.addEventListener('orientationchange', () => {
-  setTimeout(verificarOrientacao, 100);
-});
-
-window.addEventListener('resize', () => {
-  verificarOrientacao();
-});

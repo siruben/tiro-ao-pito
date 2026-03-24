@@ -8,48 +8,24 @@
   padding: 0;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
+body {
+  font-family: 'Nunito', sans-serif;
   overflow: hidden;
   user-select: none;
   background: #1a0a00;
-  font-family: 'Nunito', sans-serif;
-  touch-action: manipulation; /* 🔥 melhoria mobile */
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* 🔥 forçar portrait em landscape */
-@media (orientation: landscape) {
-  html, body {
-    transform: rotate(90deg);
-    transform-origin: center;
-    width: 100vh;
-    height: 100vw;
-  }
-}
-
-button {
-  user-select: none;
-}
-
-/* ─── WRAPPER ───────────────────────────────────────────────────────────────── */
+/* Contentor portrait — mantém proporção 2:3 centrado no ecrã */
 #wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: relative;
+  width: min(100vw, calc(100vh * 0.667));
+  height: min(100vh, calc(100vw * 1.5));
   overflow: hidden;
-  background: url("poster.png") center/cover no-repeat;
-}
-
-/* 🔥 otimização para telefone portrait */
-@media (max-width: 768px) and (orientation: portrait) {
-  #wrapper {
-    background-size: 100% 100%;
-    background-position: center;
-    background-attachment: fixed;
-  }
 }
 
 /* ─── MENU ──────────────────────────────────────────────────────────────────── */
@@ -57,6 +33,12 @@ button {
   width: 100%;
   height: 100%;
   position: relative;
+  background: url("poster.png") center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 8vh;
 }
 
 #btnJogar {
@@ -83,21 +65,15 @@ button {
 #btnJogar:hover  { transform: translateX(-50%) translateY(-3px); box-shadow: 0 9px 0 #7a0000; }
 #btnJogar:active { transform: translateX(-50%) translateY(3px);  box-shadow: 0 3px 0 #7a0000; }
 
+
+
 /* ─── JOGO ──────────────────────────────────────────────────────────────────── */
 #game {
   width: 100%;
   height: 100%;
+  background: url("poster.png") center/cover no-repeat;
   position: relative;
   overflow: hidden;
-}
-
-/* 🔥 efeito de profundidade */
-#game::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.4));
-  pointer-events: none;
 }
 
 /* ─── HUD ───────────────────────────────────────────────────────────────────── */
@@ -138,7 +114,7 @@ button {
   text-shadow: 2px 2px 0 #7a0000;
 }
 
-/* ─── MENSAGEM ─────────────────────────────────────────────────────────────── */
+/* ─── MENSAGEM DE AVISO ─────────────────────────────────────────────────────── */
 #mensagem {
   position: absolute;
   bottom: 16%;
@@ -158,6 +134,7 @@ button {
 /* ─── PITO ──────────────────────────────────────────────────────────────────── */
 .pito {
   position: absolute;
+  /* tamanho relativo ao ecrã — fica proporcional em mobile e PC */
   width: clamp(60px, 14vw, 110px);
   cursor: crosshair;
   animation: aparecer 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -165,11 +142,6 @@ button {
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55));
   transform-origin: bottom center;
   -webkit-tap-highlight-color: transparent;
-  will-change: transform, opacity; /* 🔥 performance */
-}
-
-.pito:active {
-  transform: scale(0.9); /* 🔥 recoil */
 }
 
 .pito img {
@@ -183,53 +155,157 @@ button {
   to   { transform: scale(1) translateY(0);    opacity: 1; }
 }
 
-/* ─── ACERTO MELHORADO ─────────────────────────────────────────────────────── */
+/* ─── OLHO ──────────────────────────────────────────────────────────────────── */
+.olho {
+  position: absolute;
+  /* Ajustado ao olho do pito.png — afina se necessário */
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  top: 18%;
+  left: 30%;
+  cursor: no-drop;
+  /* descomenta para depurar a posição do olho:
+  background: rgba(255,0,0,0.3); */
+}
+
+/* ─── ACERTO ────────────────────────────────────────────────────────────────── */
 .pito.acertado {
-  animation: acerto 0.25s ease forwards;
+  animation: acerto 0.18s ease forwards;
   pointer-events: none;
 }
 
 @keyframes acerto {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.5) rotate(5deg); }
-  70%  { transform: scale(1.2) rotate(-5deg); }
-  100% { transform: scale(0.4); opacity: 0; }
+  0%   { transform: scale(1);   opacity: 1; filter: drop-shadow(0 0 0px #fff); }
+  50%  { transform: scale(1.4); opacity: 1; filter: drop-shadow(0 0 14px #fff) brightness(2.5); }
+  100% { transform: scale(0.5); opacity: 0; }
 }
 
-/* ─── SAIR ─────────────────────────────────────────────────────────────────── */
+/* ─── SAÍDA SEM CLIQUE ──────────────────────────────────────────────────────── */
 .pito.a-sair {
   animation: sair 0.22s ease forwards;
   pointer-events: none;
 }
 
 @keyframes sair {
-  from { transform: scale(1); opacity: 1; }
-  to   { transform: scale(0); opacity: 0; }
+  from { transform: scale(1) translateY(0);    opacity: 1; }
+  to   { transform: scale(0) translateY(20px); opacity: 0; }
 }
 
-/* ─── PERFORMANCE EXTRA ────────────────────────────────────────────────────── */
-.pontos-voadores,
-#gameOverBox {
-  will-change: transform, opacity;
-}
-
-/* ─── VIDAS ────────────────────────────────────────────────────────────────── */
-#vidasBar {
+/* ─── ECRÃ DE FIM DO JOGO ───────────────────────────────────────────────────── */
+#gameOver {
   position: absolute;
-  top: 475px;
-  width: 100%;
+  inset: 0;
+  background: rgba(0,0,0,0.80);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#gameOverBox {
+  background: linear-gradient(180deg, #5c2a00, #3b1200);
+  color: #fff3d1;
   text-align: center;
-  z-index: 10;
+  padding: 44px 56px 48px;
+  border-radius: 22px;
+  border: 5px solid #ffcc00;
+  box-shadow: 0 8px 0 #7a2e00, 0 12px 40px rgba(0,0,0,0.7);
+  animation: slideUp 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+  max-width: 380px;
+  width: 88vw;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px) scale(0.9); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);   opacity: 1; }
+}
+
+#gameOverBox h1 {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(30px, 8vw, 46px);
+  color: #FFE033;
+  text-shadow: 3px 3px 0 #b85c00, 5px 5px 0 #7a2e00;
+  margin-bottom: 12px;
+}
+
+#gameOverBox p {
+  font-size: 18px;
+  color: #ffd0a0;
+  margin-bottom: 6px;
+}
+
+#gameOverBox strong {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(40px, 12vw, 58px);
+  color: #FFE033;
+  text-shadow: 2px 2px 0 #b85c00, 0 0 14px rgba(255,200,0,0.5);
+  display: block;
+  line-height: 1;
+  margin-bottom: 28px;
+}
+
+#gameOverBox button {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(18px, 4vw, 22px);
+  padding: 14px 40px;
+  border-radius: 12px;
+  border: 3px solid #fff3d1;
+  background: linear-gradient(180deg, #ff4e00, #c62000);
+  color: #fff3d1;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #7a0000, 0 7px 16px rgba(0,0,0,0.4);
+  transition: transform 0.12s, box-shadow 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#gameOverBox button:hover  { transform: translateY(-3px); box-shadow: 0 8px 0 #7a0000; }
+#gameOverBox button:active { transform: translateY(3px);  box-shadow: 0 2px 0 #7a0000; }
+
+
+
+
+/* ─── PITOS NO MENU ────────────────────────────────────────────────────────── */
+.menu-pito {
+  position: absolute;
+  width: clamp(60px, 14vw, 100px);
+  transform: translateX(-50%);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  pointer-events: none;
+  animation: aparecer 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.menu-pito:nth-of-type(1) { animation-delay: 0.0s; }
+.menu-pito:nth-of-type(2) { animation-delay: 0.1s; }
+.menu-pito:nth-of-type(3) { animation-delay: 0.2s; }
+.menu-pito:nth-of-type(4) { animation-delay: 0.3s; }
+.menu-pito:nth-of-type(5) { animation-delay: 0.4s; }
+
+/* ─── BADGES DE NOME NO MENU ────────────────────────────────────────────────── */
+.menu-badge {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(11px, 3vw, 15px);
+  color: #3b1200;
+  background: #FFE033;
+  border: 2px solid #b85c00;
+  border-radius: 20px;
+  padding: 2px 10px;
+  box-shadow: 0 2px 0 #b85c00;
+  white-space: nowrap;
+  z-index: 6;
   pointer-events: none;
 }
 
-#vidas {
-  font-size: clamp(18px, 5vw, 28px);
-  letter-spacing: 6px;
-  filter: drop-shadow(0 0 6px red); /* 🔥 glow */
-}
-
-/* ─── BOTÃO SOM ───────────────────────────────────────────────────────────── */
+/* ─── BOTÃO SOM ─────────────────────────────────────────────────────────────── */
 #btnSom {
   position: absolute;
   top: 12px;
@@ -242,167 +318,127 @@ button {
   height: clamp(40px, 10vw, 52px);
   cursor: pointer;
   z-index: 20;
+  transition: transform 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-#btnSom.off {
-  opacity: 0.5;
-  filter: grayscale(1);
-}
+#btnSom:hover  { background: rgba(0,0,0,0.65); transform: scale(1.1); }
+#btnSom:active { transform: scale(0.9); }
 
-/* ─── MENU PITOS ────────────────────────────────────────────────────────────── */
-.menu-pito {
-  position: absolute;
-  width: clamp(40px, 8vw, 70px);
-  opacity: 0.9;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-  transition: transform 0.2s;
-  z-index: 3;
-}
-
-.menu-pito:hover {
-  transform: scale(1.1);
-}
-
-/* ─── MENU BADGES ───────────────────────────────────────────────────────────── */
-.menu-badge {
-  position: absolute;
-  font-family: 'Lilita One', cursive;
-  font-size: clamp(9px, 2vw, 12px);
-  background: linear-gradient(180deg, #c62000, #7a0000);
-  color: #fff3d1;
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1.5px solid #fff3d1;
-  text-shadow: 1px 1px 2px #000;
-  box-shadow: 0 2px 0 #3d0000;
-  white-space: nowrap;
-  z-index: 4;
-}
-
-/* ─── GAME OVER ──────────────────────────────────────────────────────────────── */
-#gameOver {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-
-#gameOverBox {
-  background: linear-gradient(180deg, #c62000, #7a0000);
-  border: 4px solid #fff3d1;
-  border-radius: 20px;
-  padding: 40px;
-  text-align: center;
-  color: #fff3d1;
-  font-family: 'Lilita One', cursive;
-  box-shadow: 0 10px 0 #3d0000, 0 15px 40px rgba(0,0,0,0.8);
-}
-
-#gameOverTitulo {
-  font-size: clamp(32px, 8vw, 56px);
-  margin-bottom: 20px;
-  text-shadow: 3px 3px 0 #7a0000;
-}
-
-#gameOverBox strong {
-  display: block;
-  font-size: clamp(28px, 7vw, 48px);
-  margin: 20px 0;
-  color: #FFE033;
-  text-shadow: 2px 2px 0 #7a0000;
-}
-
+/* ─── RECORDE NO FIM DO JOGO ────────────────────────────────────────────────── */
 #recordTexto {
-  font-size: clamp(14px, 3.5vw, 18px);
-  color: #ffd0a0;
-  margin: 15px 0 30px;
-  text-shadow: 1px 1px 2px #000;
-}
-
-#gameOverBox button {
   font-family: 'Lilita One', cursive;
-  font-size: clamp(18px, 4vw, 24px);
-  padding: 12px 40px;
-  border-radius: 12px;
-  border: 3px solid #fff3d1;
-  background: linear-gradient(180deg, #ff4e00, #c62000);
-  color: #fff3d1;
-  cursor: pointer;
-  letter-spacing: 1px;
-  box-shadow: 0 5px 0 #7a0000;
-  transition: transform 0.12s, box-shadow 0.12s;
-}
-
-#gameOverBox button:active {
-  transform: translateY(4px);
-  box-shadow: 0 1px 0 #7a0000;
-}
-
-/* ─── NÍVEL OVERLAY ─────────────────────────────────────────────────────────── */
-#nivelOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 50;
-}
-
-#nivelBox {
-  background: linear-gradient(180deg, #ff4e00, #c62000);
-  border: 5px solid #fff3d1;
-  border-radius: 15px;
-  padding: 30px 50px;
-  font-family: 'Lilita One', cursive;
-  font-size: clamp(32px, 8vw, 56px);
-  color: #fff3d1;
-  text-shadow: 3px 3px 0 #7a0000;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-  animation: nivelPulse 0.6s ease-out;
-}
-
-@keyframes nivelPulse {
-  0%   { transform: scale(0); }
-  50%  { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  font-size: clamp(14px, 4vw, 18px);
+  color: #FFE033;
+  text-shadow: 1px 1px 0 #b85c00;
+  margin-bottom: 20px;
 }
 
 /* ─── PONTOS VOADORES ───────────────────────────────────────────────────────── */
 .pontos-voadores {
   position: absolute;
   font-family: 'Lilita One', cursive;
-  font-size: clamp(16px, 4vw, 24px);
-  font-weight: bold;
+  font-size: clamp(22px, 7vw, 36px);
   pointer-events: none;
-  z-index: 15;
-  animation: voar 0.8s ease-out forwards;
-  transform-origin: center;
+  z-index: 50;
+  transform: translateX(-50%);
+  animation: voar 1s ease forwards;
+  white-space: nowrap;
 }
 
 .pontos-voadores.positivo {
   color: #FFE033;
-  text-shadow: 2px 2px 0 #7a0000, 0 0 8px #ff6600;
+  text-shadow: 2px 2px 0 #b85c00, 0 0 10px rgba(255,200,0,0.6);
 }
 
 .pontos-voadores.negativo {
-  color: #FF6B6B;
-  text-shadow: 2px 2px 0 #7a0000, 0 0 8px #ff0000;
+  color: #ff4444;
+  text-shadow: 2px 2px 0 #7a0000, 0 0 10px rgba(255,0,0,0.5);
 }
 
 @keyframes voar {
-  0%   { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-80px) scale(0.5); opacity: 0; }
+  0%   { transform: translateX(-50%) translateY(0px);   opacity: 1; }
+  60%  { transform: translateX(-50%) translateY(-60px); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-90px); opacity: 0; }
+}
+
+/* ─── NÍVEL NO HUD ───────────────────────────────────────────────────────────── */
+.hud-nivel {
+  background: linear-gradient(180deg, #007a00, #004d00) !important;
+  border-color: #aaffaa !important;
+  box-shadow: 0 5px 0 #002200, 0 6px 16px rgba(0,0,0,0.5) !important;
+}
+
+/* ─── OVERLAY DE TRANSIÇÃO DE NÍVEL ─────────────────────────────────────────── */
+#nivelOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 90;
+}
+
+#nivelBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+#nivelTexto {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(48px, 14vw, 80px);
+  color: #FFE033;
+  text-shadow:
+    4px 4px 0 #b85c00,
+    7px 7px 0 #7a2e00,
+    0 0 30px rgba(255,180,0,0.7);
+  display: block;
+}
+
+#nivelSub {
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(18px, 5vw, 26px);
+  color: #fff3d1;
+  text-shadow: 2px 2px 6px #000;
+  display: block;
+}
+
+.a-entrar-nivel {
+  animation: entrarNivel 0.3s ease forwards;
+}
+
+.a-sair-nivel {
+  animation: sairNivel 0.4s ease forwards;
+}
+
+@keyframes entrarNivel {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes sairNivel {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ─── BARRA DE VIDAS ────────────────────────────────────────────────────────── */
+#vidasBar {
+  position: absolute;
+  top: 475px;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#vidas {
+  font-size: clamp(18px, 5vw, 28px);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+  letter-spacing: 4px;
 }
