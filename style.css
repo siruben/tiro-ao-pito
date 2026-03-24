@@ -28,6 +28,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: url("poster.png") center/cover no-repeat;
 }
 
 /* ─── MENU ──────────────────────────────────────────────────────────────────── */
@@ -35,12 +36,6 @@ body {
   width: 100%;
   height: 100%;
   position: relative;
-  background: url("poster.png") center/cover no-repeat;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  padding-bottom: 8vh;
 }
 
 #btnJogar {
@@ -73,7 +68,6 @@ body {
 #game {
   width: 100%;
   height: 100%;
-  background: url("poster.png") center/cover no-repeat;
   position: relative;
   overflow: hidden;
 }
