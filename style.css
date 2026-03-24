@@ -18,6 +18,16 @@ html, body {
   touch-action: manipulation; /* 🔥 melhoria mobile */
 }
 
+/* 🔥 forçar portrait em landscape */
+@media (orientation: landscape) {
+  html, body {
+    transform: rotate(90deg);
+    transform-origin: center;
+    width: 100vh;
+    height: 100vw;
+  }
+}
+
 button {
   user-select: none;
 }

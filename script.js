@@ -1,52 +1,58 @@
 // ─── ORIENTAÇÃO ──────────────────────────────────────────────────────────────
 function forcarPortrait() {
+  // Tentar usar Screen Orientation API
   if (screen.orientation && screen.orientation.lock) {
-    screen.orientation.lock('portrait').catch(() => {
-      // Fallback: mostrar mensagem se não conseguir bloquear
-      mostrarOrientacaoIncorreta();
-    });
-  } else {
-    // Fallback para navegadores que não suportam screen.orientation
-    mostrarOrientacaoIncorreta();
+    screen.orientation.lock('portrait-primary').catch(() => {});
   }
-}
-
-function mostrarOrientacaoIncorreta() {
-  const overlay = document.createElement('div');
-  overlay.id = 'orientationOverlay';
-  overlay.innerHTML = `
-    <div style="
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.9);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-family: 'Lilita One', cursive;
-      z-index: 9999;
-      padding: 20px;
-    ">
-      <h2 style="font-size: 2rem; margin-bottom: 20px;">📱 Vire o telefone!</h2>
-      <p style="font-size: 1.2rem;">Este jogo funciona apenas em modo retrato</p>
-      <p style="font-size: 1rem; margin-top: 10px; opacity: 0.8;">Gire o dispositivo para continuar</p>
-    </div>
-  `;
-  document.body.appendChild(overlay);
+  // Verificação imediata
+  verificarOrientacao();
 }
 
 function verificarOrientacao() {
-  const overlay = document.getElementById('orientationOverlay');
-  if (window.innerHeight > window.innerWidth) {
-    // Portrait - remover overlay se existir
-    if (overlay) overlay.remove();
+  const isPortrait = window.innerHeight > window.innerWidth;
+  const isLandscape = !isPortrait;
+  
+  if (isLandscape) {
+    // Mostrar mensagem de rotação
+    mostrarAviso();
   } else {
-    // Landscape - mostrar overlay
-    if (!overlay) mostrarOrientacaoIncorreta();
+    // Remover aviso se existir
+    const aviso = document.getElementById('orientationAviso');
+    if (aviso) aviso.remove();
   }
+}
+
+function mostrarAviso() {
+  // Verificar se já existe
+  if (document.getElementById('orientationAviso')) return;
+  
+  const aviso = document.createElement('div');
+  aviso.id = 'orientationAviso';
+  aviso.style.cssText = `
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 99999;
+    font-family: 'Lilita One', cursive;
+    color: #FFE033;
+  `;
+  
+  aviso.innerHTML = `
+    <div style="padding: 40px; text-align: center;">
+      <h1 style="font-size: 3rem; margin-bottom: 20px;">📱</h1>
+      <h2 style="font-size: 2rem; margin-bottom: 20px; color: #fff3d1;">Vire o telefone!</h2>
+      <p style="font-size: 1.3rem; color: #ffd0a0; margin: 0;">Este jogo só funciona em modo retrato</p>
+      <p style="font-size: 1rem; color: #b8860b; margin-top: 20px;">⬅ Gire para a esquerda ➜</p>
+    </div>
+  `;
+  
+  document.body.appendChild(aviso);
 }
 
 // ─── TIPOS DE PITO ───────────────────────────────────────────────────────────
