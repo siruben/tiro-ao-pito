@@ -20,11 +20,13 @@ body {
   align-items: center;
 }
 
-/* Contentor portrait — mantém proporção 2:3 centrado no ecrã */
+/* Contentor — ocupa o ecrã todo */
 #wrapper {
-  position: relative;
-  width: min(100vw, calc(100vh * 0.667));
-  height: min(100vh, calc(100vw * 1.5));
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
