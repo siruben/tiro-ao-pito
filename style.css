@@ -13,7 +13,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   user-select: none;
-  background: url("poster.png") center/cover no-repeat;
+  background: #1a0a00;
   font-family: 'Nunito', sans-serif;
   touch-action: manipulation; /* 🔥 melhoria mobile */
 }
@@ -30,15 +30,7 @@ button {
   width: 100%;
   height: 100%;
   overflow: hidden;
-}
-
-/* ✔ proporção corrigida para 9:20 */
-@media (orientation: landscape) {
-  #wrapper {
-    width: calc(100vh * 0.45);
-    left: 50%;
-    transform: translateX(-50%);
-  }
+  background: url("poster.png") center/cover no-repeat;
 }
 
 /* ─── MENU ──────────────────────────────────────────────────────────────────── */
