@@ -8,24 +8,32 @@
   padding: 0;
 }
 
-body {
-  font-family: 'Nunito', sans-serif;
+html, body {
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   user-select: none;
   background: #1a0a00;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-family: 'Nunito', sans-serif;
 }
 
-/* Contentor portrait — mantém proporção 2:3 centrado no ecrã */
+/* ─── WRAPPER ───────────────────────────────────────────────────────────────── */
+/* No telemóvel ocupa tudo. No PC em landscape centra em portrait. */
 #wrapper {
-  position: relative;
-  width: min(100vw, calc(100vh * 0.667));
-  height: min(100vh, calc(100vw * 1.5));
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+}
+
+@media (orientation: landscape) {
+  #wrapper {
+    width: calc(100vh * 0.667);
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 /* ─── MENU ──────────────────────────────────────────────────────────────────── */
@@ -34,11 +42,6 @@ body {
   height: 100%;
   position: relative;
   background: url("poster.png") center/cover no-repeat;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  padding-bottom: 8vh;
 }
 
 #btnJogar {
@@ -64,8 +67,6 @@ body {
 
 #btnJogar:hover  { transform: translateX(-50%) translateY(-3px); box-shadow: 0 9px 0 #7a0000; }
 #btnJogar:active { transform: translateX(-50%) translateY(3px);  box-shadow: 0 3px 0 #7a0000; }
-
-
 
 /* ─── JOGO ──────────────────────────────────────────────────────────────────── */
 #game {
@@ -134,7 +135,6 @@ body {
 /* ─── PITO ──────────────────────────────────────────────────────────────────── */
 .pito {
   position: absolute;
-  /* tamanho relativo ao ecrã — fica proporcional em mobile e PC */
   width: clamp(60px, 14vw, 110px);
   cursor: crosshair;
   animation: aparecer 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -158,15 +158,12 @@ body {
 /* ─── OLHO ──────────────────────────────────────────────────────────────────── */
 .olho {
   position: absolute;
-  /* Ajustado ao olho do pito.png — afina se necessário */
   width: 28%;
   height: 28%;
   border-radius: 50%;
   top: 18%;
   left: 30%;
   cursor: no-drop;
-  /* descomenta para depurar a posição do olho:
-  background: rgba(255,0,0,0.3); */
 }
 
 /* ─── ACERTO ────────────────────────────────────────────────────────────────── */
@@ -269,10 +266,7 @@ body {
 #gameOverBox button:hover  { transform: translateY(-3px); box-shadow: 0 8px 0 #7a0000; }
 #gameOverBox button:active { transform: translateY(3px);  box-shadow: 0 2px 0 #7a0000; }
 
-
-
-
-/* ─── PITOS NO MENU ────────────────────────────────────────────────────────── */
+/* ─── PITOS NO MENU ─────────────────────────────────────────────────────────── */
 .menu-pito {
   position: absolute;
   width: clamp(60px, 14vw, 100px);
@@ -441,33 +435,4 @@ body {
   font-size: clamp(18px, 5vw, 28px);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
   letter-spacing: 4px;
-}
-
-/* ─── MOBILE RESPONSIVO ────────────────────────────────────────────────────── */
-@media (max-width: 768px) and (min-aspect-ratio: 9/16) {
-  /* Para telemóveis em portrait */
-  
-  #hud {
-    top: 90px !important;
-  }
-  
-  #vidasBar {
-    top: 300px !important;
-  }
-  
-  #mensagem {
-    bottom: 20%;
-  }
-  
-  .pito {
-    /* Aumentar um pouco o tamanho no mobile */
-    width: clamp(70px, 18vw, 100px) !important;
-  }
-  
-  /* Reposicionar pitos por slot no mobile */
-  .pito[data-slot-id="0"] { left: 8% !important;  top: 45% !important; }
-  .pito[data-slot-id="1"] { left: 40% !important; top: 38% !important; }
-  .pito[data-slot-id="2"] { left: 72% !important; top: 45% !important; }
-  .pito[data-slot-id="3"] { left: 14% !important; top: 60% !important; }
-  .pito[data-slot-id="4"] { left: 71% !important; top: 60% !important; }
 }
