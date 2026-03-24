@@ -1,3 +1,54 @@
+// ─── ORIENTAÇÃO ──────────────────────────────────────────────────────────────
+function forcarPortrait() {
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('portrait').catch(() => {
+      // Fallback: mostrar mensagem se não conseguir bloquear
+      mostrarOrientacaoIncorreta();
+    });
+  } else {
+    // Fallback para navegadores que não suportam screen.orientation
+    mostrarOrientacaoIncorreta();
+  }
+}
+
+function mostrarOrientacaoIncorreta() {
+  const overlay = document.createElement('div');
+  overlay.id = 'orientationOverlay';
+  overlay.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: 'Lilita One', cursive;
+      z-index: 9999;
+      padding: 20px;
+    ">
+      <h2 style="font-size: 2rem; margin-bottom: 20px;">📱 Vire o telefone!</h2>
+      <p style="font-size: 1.2rem;">Este jogo funciona apenas em modo retrato</p>
+      <p style="font-size: 1rem; margin-top: 10px; opacity: 0.8;">Gire o dispositivo para continuar</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function verificarOrientacao() {
+  const overlay = document.getElementById('orientationOverlay');
+  if (window.innerHeight > window.innerWidth) {
+    // Portrait - remover overlay se existir
+    if (overlay) overlay.remove();
+  } else {
+    // Landscape - mostrar overlay
+    if (!overlay) mostrarOrientacaoIncorreta();
+  }
+}
+
 // ─── TIPOS DE PITO ───────────────────────────────────────────────────────────
 const PITOS = [
   { img: "pito.png",     pontos: 10 },
@@ -298,3 +349,17 @@ function terminarJogo(perdeu = false) {
   document.getElementById("game").style.display     = "none";
   document.getElementById("gameOver").style.display = "flex";
 }
+
+// ─── INICIALIZAÇÃO ────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  forcarPortrait();
+  verificarOrientacao();
+});
+
+window.addEventListener('orientationchange', () => {
+  setTimeout(verificarOrientacao, 100);
+});
+
+window.addEventListener('resize', () => {
+  verificarOrientacao();
+});
