@@ -1,10 +1,9 @@
-const CACHE = "tiro-ao-pito-v1";
+const CACHE = "tiro-ao-pito-v2";
 const FICHEIROS = [
   "/tiro-ao-pito/",
   "/tiro-ao-pito/index.html",
   "/tiro-ao-pito/style.css",
   "/tiro-ao-pito/script.js",
-  "/tiro-ao-pito/poster.png",
   "/tiro-ao-pito/pito.png",
   "/tiro-ao-pito/gordo.png",
   "/tiro-ao-pito/magro.png",
@@ -15,10 +14,20 @@ const FICHEIROS = [
   "/tiro-ao-pito/tiro.mp3"
 ];
 
-// Instala e guarda ficheiros em cache
+// Limpar caches antigos
 self.addEventListener("install", e => {
   e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(FICHEIROS))
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      return caches.open(CACHE).then(cache => cache.addAll(FICHEIROS));
+    })
   );
 });
 
