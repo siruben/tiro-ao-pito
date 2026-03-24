@@ -131,7 +131,7 @@ body {
 .pito {
   position: absolute;
   /* tamanho relativo ao ecrã — fica proporcional em mobile e PC */
-  width: clamp(60px, 14vw, 110px);
+  width: clamp(75px, 17.5vw, 137px);
   cursor: crosshair;
   animation: aparecer 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   z-index: 5;
