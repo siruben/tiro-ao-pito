@@ -33,6 +33,15 @@ button {
   background: url("poster.png") center/cover no-repeat;
 }
 
+/* 🔥 otimização para telefone portrait */
+@media (max-width: 768px) and (orientation: portrait) {
+  #wrapper {
+    background-size: 100% 100%;
+    background-position: center;
+    background-attachment: fixed;
+  }
+}
+
 /* ─── MENU ──────────────────────────────────────────────────────────────────── */
 #menu {
   width: 100%;
