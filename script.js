@@ -18,7 +18,7 @@ const NIVEIS = [
 const SLOTS = [
   { id: 0, left: "11%",  top: "72%" },
   { id: 1, left: "40%", top: "45%" },
-  { id: 2, left: "73%", top: "55" },
+  { id: 2, left: "73%", top: "55%" },
   { id: 3, left: "6%", top: "55%" },
   { id: 4, left: "70%", top: "72%" },
 ];
