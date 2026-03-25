@@ -75,7 +75,7 @@ body {
 /* ─── HUD ───────────────────────────────────────────────────────────────────── */
 #hud {
   position: absolute;
-  top: 25%;
+  top: 18%;
   width: 100%;
   display: flex;
   justify-content: space-between;
