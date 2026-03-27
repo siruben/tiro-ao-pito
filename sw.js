@@ -1,9 +1,11 @@
-const CACHE = "tiro-ao-pito-v3";
+const CACHE = "tiro-ao-pito-v4";
 const FICHEIROS = [
   "/tiro-ao-pito/",
   "/tiro-ao-pito/index.html",
+  "/tiro-ao-pito/manifest.json",
   "/tiro-ao-pito/style.css",
   "/tiro-ao-pito/script.js",
+  "/tiro-ao-pito/poster.png",
   "/tiro-ao-pito/pito.png",
   "/tiro-ao-pito/gordo.png",
   "/tiro-ao-pito/magro.png",

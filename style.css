@@ -286,18 +286,23 @@ body {
 
 /* ─── BADGES DE NOME NO MENU ────────────────────────────────────────────────── */
 .menu-badge {
+  display: none;
+}
+
+#credito {
   position: absolute;
-  transform: translateX(-50%);
+  right: 12px;
+  bottom: 12px;
+  z-index: 30;
   font-family: 'Lilita One', cursive;
-  font-size: clamp(11px, 3vw, 15px);
-  color: #3b1200;
-  background: #FFE033;
-  border: 2px solid #b85c00;
-  border-radius: 20px;
-  padding: 2px 10px;
-  box-shadow: 0 2px 0 #b85c00;
-  white-space: nowrap;
-  z-index: 6;
+  font-size: clamp(10px, 2.8vw, 14px);
+  color: #fff3d1;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 #5c2a00, 0 0 8px rgba(0,0,0,0.65);
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,224,51,0.7);
+  border-radius: 999px;
+  padding: 4px 10px;
   pointer-events: none;
 }
 
