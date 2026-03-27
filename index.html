@@ -14,6 +14,7 @@
   <!-- ── SPLASH ───────────────────────────────────────────────────────────── -->
   <div id="splash">
     <img src="criador.png" alt="Criador">
+    <span id="splashTimer">3</span>
   </div>
 
   <!-- ── MENU ─────────────────────────────────────────────────────────────── -->
@@ -84,14 +85,23 @@
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/tiro-ao-pito/sw.js").catch(() => {});
   }
-  setTimeout(() => {
-    const splash = document.getElementById("splash");
-    splash.classList.add("splash-ocultar");
-    setTimeout(() => {
-      splash.style.display = "none";
-      document.getElementById("menu").style.display = "block";
-    }, 600);
-  }, 3000);
+  let splashCount = 3;
+  const splashTimerEl = document.getElementById("splashTimer");
+  const splashInterval = setInterval(() => {
+    splashCount--;
+    if (splashCount > 0) {
+      splashTimerEl.textContent = splashCount;
+    } else {
+      clearInterval(splashInterval);
+      splashTimerEl.textContent = "";
+      const splash = document.getElementById("splash");
+      splash.classList.add("splash-ocultar");
+      setTimeout(() => {
+        splash.style.display = "none";
+        document.getElementById("menu").style.display = "block";
+      }, 600);
+    }
+  }, 1000);
 </script>
 </body>
 </html>

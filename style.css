@@ -305,10 +305,24 @@ body {
 }
 
 #splash img {
-  max-width: 60%;
-  max-height: 60%;
+  max-width: 80%;
+  max-height: 80%;
   object-fit: contain;
   filter: drop-shadow(0 4px 20px rgba(0,0,0,0.7));
+}
+
+/* ─── TEMPORIZADOR DO SPLASH ─────────────────────────────────────────────────── */
+#splashTimer {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Lilita One', cursive;
+  font-size: clamp(28px, 8vw, 48px);
+  color: #FFE033;
+  text-shadow: 2px 2px 0 #b85c00, 0 0 14px rgba(255,200,0,0.5);
+  letter-spacing: 2px;
+  pointer-events: none;
 }
 
 #splash.splash-ocultar {
