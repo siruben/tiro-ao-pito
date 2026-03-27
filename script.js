@@ -248,6 +248,14 @@ function atualizarHUD() {
   document.getElementById("time").innerText  = estado.tempo;
   document.getElementById("nivel").innerText = estado.nivelAtual + 1;
   document.getElementById("vidas").innerText = "🐣".repeat(estado.vidas);
+
+  // Aviso visual quando o tempo está a acabar
+  const hudTempo = document.getElementById("hudTempo");
+  if (estado.tempo <= 10 && estado.tempo > 0) {
+    hudTempo.classList.add("hud-tempo-aviso");
+  } else {
+    hudTempo.classList.remove("hud-tempo-aviso");
+  }
 }
 
 // ─── MENSAGEM ─────────────────────────────────────────────────────────────────

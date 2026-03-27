@@ -305,8 +305,8 @@ body {
 }
 
 #splash img {
-  max-width: 60%;
-  max-height: 60%;
+  max-width: 80%;
+  max-height: 80%;
   object-fit: contain;
   filter: drop-shadow(0 4px 20px rgba(0,0,0,0.7));
 }
@@ -373,6 +373,19 @@ body {
   0%   { transform: translateX(-50%) translateY(0px);   opacity: 1; }
   60%  { transform: translateX(-50%) translateY(-60px); opacity: 1; }
   100% { transform: translateX(-50%) translateY(-90px); opacity: 0; }
+}
+
+/* ─── TEMPORIZADOR EM AVISO ─────────────────────────────────────────────────── */
+.hud-tempo-aviso {
+  background: linear-gradient(180deg, #ff4e00, #c62000) !important;
+  border-color: #FFE033 !important;
+  box-shadow: 0 5px 0 #7a0000, 0 6px 16px rgba(0,0,0,0.5) !important;
+  animation: piscarTempo 0.6s ease-in-out infinite !important;
+}
+
+@keyframes piscarTempo {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
 }
 
 /* ─── NÍVEL NO HUD ───────────────────────────────────────────────────────────── */
