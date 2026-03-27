@@ -9,12 +9,12 @@
   "theme_color": "#1a0a00",
   "icons": [
     {
-      "src": "poster.png",
+      "src": "criador.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "poster.png",
+      "src": "criador.png",
       "sizes": "512x512",
       "type": "image/png"
     }
