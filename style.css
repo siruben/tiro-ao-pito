@@ -289,21 +289,30 @@ body {
   display: none;
 }
 
-#credito {
+#credito { display: none; }
+
+/* ─── SPLASH DO CRIADOR ──────────────────────────────────────────────────────────── */
+#splash {
   position: absolute;
-  right: 12px;
-  bottom: 12px;
-  z-index: 30;
-  font-family: 'Lilita One', cursive;
-  font-size: clamp(10px, 2.8vw, 14px);
-  color: #fff3d1;
-  letter-spacing: 1px;
-  text-shadow: 1px 1px 0 #5c2a00, 0 0 8px rgba(0,0,0,0.65);
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,224,51,0.7);
-  border-radius: 999px;
-  padding: 4px 10px;
-  pointer-events: none;
+  inset: 0;
+  background: #1a0a00;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+#splash img {
+  max-width: 60%;
+  max-height: 60%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.7));
+}
+
+#splash.splash-ocultar {
+  opacity: 0;
 }
 
 /* ─── BOTÃO SOM ─────────────────────────────────────────────────────────────── */

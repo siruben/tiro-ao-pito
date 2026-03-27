@@ -11,8 +11,13 @@
 <body>
 <div id="wrapper">
 
+  <!-- ── SPLASH ───────────────────────────────────────────────────────────── -->
+  <div id="splash">
+    <img src="criador.png" alt="Criador">
+  </div>
+
   <!-- ── MENU ─────────────────────────────────────────────────────────────── -->
-  <div id="menu">
+  <div id="menu" style="display:none;">
 
     <!-- Pitos nos ninhos (só imagem, sem pontos) -->
     <img class="menu-pito" id="mp-gordo"    src="gordo.png"    style="left:11%; top:72%;">
@@ -79,6 +84,14 @@
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/tiro-ao-pito/sw.js").catch(() => {});
   }
+  setTimeout(() => {
+    const splash = document.getElementById("splash");
+    splash.classList.add("splash-ocultar");
+    setTimeout(() => {
+      splash.style.display = "none";
+      document.getElementById("menu").style.display = "block";
+    }, 600);
+  }, 3000);
 </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE = "tiro-ao-pito-v5";
+const CACHE = "tiro-ao-pito-v6";
 const FICHEIROS = [
   "/tiro-ao-pito/",
   "/tiro-ao-pito/index.html",
