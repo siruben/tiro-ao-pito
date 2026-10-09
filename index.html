@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Tiro ao Pito</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
@@ -26,13 +26,13 @@
     <img class="menu-pito" id="mp-careca"   src="careca.png"   style="left:6%;  top:55%;">
     <img class="menu-pito" id="mp-cabeludo" src="cabeludo.png" style="left:70%; top:72%;">
 
-    <!-- Botão som -->
-    <button id="btnSom" onclick="toggleSom()">🔊</button>
-
     <!-- Botão jogar -->
     <button id="btnJogar" onclick="startGame()">JOGAR</button>
 
   </div>
+
+  <!-- Botão som (fora do menu, para também aparecer durante o jogo) -->
+  <button id="btnSom" onclick="toggleSom()">🔊</button>
 
   <!-- ── ÁUDIOS ────────────────────────────────────────────────────────────── -->
   <audio id="introMusic" src="intro.mp3"></audio>
@@ -74,7 +74,7 @@
       <h1 id="gameOverTitulo">FIM DO JOGO!</h1>
       <strong><span id="finalScore">0</span> pts</strong>
       <p id="recordTexto"></p>
-      <button onclick="location.reload()">Jogar de novo</button>
+      <button onclick="jogarDeNovo()">Jogar de novo</button>
     </div>
   </div>
 
@@ -82,7 +82,7 @@
 <script src="script.js"></script>
 <script>
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/tiro-ao-pito/sw.js").catch(() => {});
+    navigator.serviceWorker.register("sw.js").catch(() => {});
   }
   setTimeout(() => {
     const splash = document.getElementById("splash");

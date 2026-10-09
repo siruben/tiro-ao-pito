@@ -1,36 +1,36 @@
-const CACHE = "tiro-ao-pito-v6";
+const CACHE = "tiro-ao-pito-v7";
+// caminhos relativos ao sw.js: funcionam no GitHub Pages e dentro da app Android
 const FICHEIROS = [
-  "/tiro-ao-pito/",
-  "/tiro-ao-pito/index.html",
-  "/tiro-ao-pito/manifest.json",
-  "/tiro-ao-pito/style.css",
-  "/tiro-ao-pito/script.js",
-  "/tiro-ao-pito/poster.png",
-  "/tiro-ao-pito/criador.png",
-  "/tiro-ao-pito/pito.png",
-  "/tiro-ao-pito/gordo.png",
-  "/tiro-ao-pito/magro.png",
-  "/tiro-ao-pito/careca.png",
-  "/tiro-ao-pito/cabeludo.png",
-  "/tiro-ao-pito/intro.mp3",
-  "/tiro-ao-pito/feira.mp3",
-  "/tiro-ao-pito/tiro.mp3"
+  "./",
+  "index.html",
+  "manifest.json",
+  "style.css",
+  "script.js",
+  "poster.jpg",
+  "criador.png",
+  "pito.png",
+  "gordo.png",
+  "magro.png",
+  "careca.png",
+  "cabeludo.png",
+  "icon-192.png",
+  "icon-512.png",
+  "intro.mp3",
+  "feira.mp3",
+  "tiro.mp3"
 ];
 
-// Limpar caches antigos
 self.addEventListener("install", e => {
+  e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FICHEIROS)));
+  self.skipWaiting();
+});
+
+// Limpar caches antigos
+self.addEventListener("activate", e => {
   e.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      return caches.open(CACHE).then(cache => cache.addAll(FICHEIROS));
-    })
+    caches.keys()
+      .then(nomes => Promise.all(nomes.filter(n => n !== CACHE).map(n => caches.delete(n))))
+      .then(() => self.clients.claim())
   );
 });
 

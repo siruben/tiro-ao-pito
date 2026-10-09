@@ -15,6 +15,7 @@ body {
   background: #1a0a00;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,7 +29,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: url("poster.png") center/cover no-repeat;
+  background: url("poster.jpg") center/cover no-repeat;
 }
 
 /* ─── MENU ──────────────────────────────────────────────────────────────────── */
@@ -154,12 +155,8 @@ body {
 /* ─── OLHO ──────────────────────────────────────────────────────────────────── */
 .olho {
   position: absolute;
-  /* Ajustado ao olho do pito.png — afina se necessário */
-  width: 28%;
-  height: 28%;
+  /* posição e tamanho vêm do script.js (campo "olhos" de cada pito) */
   border-radius: 50%;
-  top: 18%;
-  left: 30%;
   cursor: no-drop;
   /* descomenta para depurar a posição do olho:
   background: rgba(255,0,0,0.3); */
