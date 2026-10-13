@@ -1,17 +1,18 @@
 // ─── TIPOS DE PITO ───────────────────────────────────────────────────────────
+// olhos: [centro-x, centro-y, diâmetro] em % da imagem (zona de penalização)
 const PITOS = [
-  { img: "pito.png",     pontos: 10 },
-  { img: "gordo.png",    pontos: 5  },
-  { img: "magro.png",    pontos: 20 },
-  { img: "careca.png",   pontos: 15 },
-  { img: "cabeludo.png", pontos: 10 },
+  { img: "pito.png",     pontos: 10, olhos: [[38.3, 37.6, 15.2], [63.5, 36.6, 15.0]] },
+  { img: "gordo.png",    pontos: 5,  olhos: [[38.4, 38.0, 15.6], [64.0, 37.0, 15.6]] },
+  { img: "magro.png",    pontos: 20, olhos: [[38.6, 38.0, 15.6], [64.0, 37.4, 15.6]] },
+  { img: "careca.png",   pontos: 15, olhos: [[38.0, 34.0, 12.6], [62.4, 34.0, 12.6]] },
+  { img: "cabeludo.png", pontos: 10, olhos: [[38.6, 37.6, 15.2], [63.6, 37.2, 15.2]] },
 ];
 
 // ─── CONFIGURAÇÃO DOS NÍVEIS ──────────────────────────────────────────────────
 const NIVEIS = [
-  { nivel: 1, intervalo: 900, maxPitos: 2, duracao: 30 },
-  { nivel: 2, intervalo: 600, maxPitos: 3, duracao: 30 },
-  { nivel: 3, intervalo: 380, maxPitos: 4, duracao: 30 },
+  { nivel: 1, intervalo: 900, maxPitos: 2, duracao: 30, tempoVida: 2000 },
+  { nivel: 2, intervalo: 600, maxPitos: 3, duracao: 30, tempoVida: 1500 },
+  { nivel: 3, intervalo: 380, maxPitos: 4, duracao: 30, tempoVida: 1000 },
 ];
 
 // ─── SLOTS ────────────────────────────────────────────────────────────────────
@@ -55,23 +56,49 @@ function toggleSom() {
 // ─── ÁUDIO ────────────────────────────────────────────────────────────────────
 function tocarTiro() {
   tiro.currentTime = 0;
-  tiro.play();
+  tiro.play().catch(() => {});
 }
 
 // ─── INTRO ────────────────────────────────────────────────────────────────────
-window.onload = () => {
-  introMusic.volume = 0.6;
-  introMusic.play().catch(() => {});
-};
+introMusic.volume = 0.6;
+
+function tocarIntro() {
+  if (estado.jogoAtivo) return;
+  introMusic.play().then(removerOuvintesIntro).catch(() => {});
+}
+
+function removerOuvintesIntro() {
+  document.removeEventListener("pointerdown", tocarIntro);
+  document.removeEventListener("keydown", tocarIntro);
+}
+
+// tenta já; se o browser bloquear, toca no primeiro toque/tecla
+window.addEventListener("load", tocarIntro);
+document.addEventListener("pointerdown", tocarIntro);
+document.addEventListener("keydown", tocarIntro);
+
+// pausa o som quando a app vai para segundo plano
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    introMusic.pause();
+    gameMusic.pause();
+  } else if (estado.jogoAtivo) {
+    gameMusic.play().catch(() => {});
+  } else if (document.getElementById("menu").style.display === "block") {
+    introMusic.play().catch(() => {});
+  }
+});
 
 // ─── INÍCIO DO JOGO ───────────────────────────────────────────────────────────
 function startGame() {
   document.getElementById("menu").style.display = "none";
   document.getElementById("game").style.display = "block";
 
+  removerOuvintesIntro();
   introMusic.pause();
   gameMusic.volume = 0.4;
-  gameMusic.play();
+  gameMusic.currentTime = 0;
+  gameMusic.play().catch(() => {});
 
   estado.pontos          = 0;
   estado.nivelAtual      = 0;
@@ -80,12 +107,19 @@ function startGame() {
   estado.nivelEmTransicao = false;
   estado.slotsOcupados.clear();
 
+  document.getElementById("gameOver").style.display = "none";
   atualizarHUD();
   iniciarNivel();
 }
 
+// ─── JOGAR DE NOVO (sem recarregar a página) ──────────────────────────────────
+function jogarDeNovo() {
+  startGame();
+}
+
 // ─── INICIAR NÍVEL ────────────────────────────────────────────────────────────
 function iniciarNivel() {
+  if (!estado.jogoAtivo) return;
   const cfg = NIVEIS[estado.nivelAtual];
   estado.tempo = cfg.duracao;
   atualizarHUD();
@@ -177,30 +211,40 @@ function criarPito() {
   img.src = tipo.img;
   img.draggable = false;
 
-  const olho = document.createElement("div");
-  olho.className = "olho";
-
   pito.appendChild(img);
-  pito.appendChild(olho);
 
-  pito.addEventListener("click", () => acertarPito(pito, slot.id, tipo.pontos));
-  olho.addEventListener("click", (e) => {
-    e.stopPropagation();
-    estado.vidas--;
-    atualizarHUD();
-    acertarPito(pito, slot.id, -tipo.pontos, "⚠ MAU! PRÓ OLHO NÃO!");
-    if (estado.vidas <= 0) {
-      setTimeout(() => terminarJogo(true), 300);
-    }
+  // zona de penalização: um círculo por olho, posicionado para este pito
+  tipo.olhos.forEach(([cx, cy, d]) => {
+    const olho = document.createElement("div");
+    olho.className = "olho";
+    olho.style.width  = d + "%";
+    olho.style.height = d + "%";
+    olho.style.left   = (cx - d / 2) + "%";
+    olho.style.top    = (cy - d / 2) + "%";
+    olho.addEventListener("pointerdown", (e) => {
+      e.stopPropagation();
+      if (pito.classList.contains("acertado") || !estado.jogoAtivo) return;
+      estado.vidas--;
+      atualizarHUD();
+      acertarPito(pito, slot.id, -tipo.pontos, "⚠ MAU! PRÓ OLHO NÃO!");
+      if (estado.vidas <= 0) {
+        setTimeout(() => terminarJogo(true), 300);
+      }
+    });
+    pito.appendChild(olho);
+  });
+
+  pito.addEventListener("pointerdown", () => {
+    if (pito.classList.contains("acertado") || !estado.jogoAtivo) return;
+    acertarPito(pito, slot.id, tipo.pontos);
   });
 
   document.getElementById("game").appendChild(pito);
 
-  // Tempo de vida do pito diminui com o nível
-  const tempoVida = [2000, 1500, 1000][estado.nivelAtual];
+  // Tempo de vida do pito diminui com o nível (ver NIVEIS)
   setTimeout(() => {
     if (pito.isConnected) removerPito(pito, slot.id);
-  }, tempoVida);
+  }, NIVEIS[estado.nivelAtual].tempoVida);
 }
 
 // ─── ACERTAR PITO ─────────────────────────────────────────────────────────────
@@ -260,6 +304,7 @@ function mostrarMensagem(texto) {
 
 // ─── FIM DO JOGO ──────────────────────────────────────────────────────────────
 function terminarJogo(perdeu = false) {
+  if (!estado.jogoAtivo) return;   // evita chamadas duplicadas
   estado.jogoAtivo = false;
   clearInterval(estado.intervaloTempo);
   clearInterval(estado.intervaloPitos);

@@ -2,7 +2,10 @@
   "name": "Tiro ao Pito",
   "short_name": "Tiro ao Pito",
   "description": "Olhó pito! Mas pró olho não!",
-  "start_url": "/tiro-ao-pito/",
+  "lang": "pt-PT",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
   "display": "fullscreen",
   "orientation": "portrait",
   "background_color": "#1a0a00",
@@ -11,12 +14,14 @@
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
