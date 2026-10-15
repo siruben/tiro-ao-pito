@@ -1,4 +1,4 @@
-const CACHE = "tiro-ao-pito-v7";
+const CACHE = "tiro-ao-pito-v8";
 // caminhos relativos ao sw.js: funcionam no GitHub Pages e dentro da app Android
 const FICHEIROS = [
   "./",
@@ -16,8 +16,7 @@ const FICHEIROS = [
   "icon-192.png",
   "icon-512.png",
   "intro.mp3",
-  "feira.mp3",
-  "tiro.mp3"
+  "feira.mp3"
 ];
 
 self.addEventListener("install", e => {
