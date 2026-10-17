@@ -199,9 +199,26 @@ const sfx = {
       case "nivel":
         [523, 659, 784, 1047].forEach((f, i) => this.tom(f, 0.16, "triangle", 0.2, i * 0.1));
         break;
-      case "fim":
-        [392, 330, 262, 196].forEach((f, i) => this.tom(f, 0.3, "triangle", 0.22, i * 0.2));
+      case "fim": {
+        // "wah wah wah waaah" de feira: três notas a descer e um escorrega final
+        [[392, 0.26], [370, 0.26], [349, 0.26]].forEach(([f, d], i) => {
+          this.tom(f, d, "sawtooth", 0.07, i * 0.32);
+          this.tom(f, d, "triangle", 0.2, i * 0.32);
+        });
+        this.tom(330, 1.1, "sawtooth", 0.07, 0.96, 165);
+        this.tom(330, 1.1, "triangle", 0.22, 0.96, 165);
+        // tuba de fundo: "oom-pah"
+        [[98, 0], [147, 0.32], [98, 0.64], [82, 0.96]].forEach(([f, a]) => this.tom(f, 0.22, "square", 0.08, a));
         break;
+      }
+      case "recorde": {
+        // fanfarra curta para um novo recorde
+        [523, 659, 784, 1047].forEach((f, i) => this.tom(f, 0.18, "triangle", 0.22, i * 0.13));
+        this.tom(1047, 0.7, "triangle", 0.22, 0.55);
+        this.tom(784, 0.7, "triangle", 0.14, 0.55);
+        this.tom(523, 0.7, "triangle", 0.14, 0.55);
+        break;
+      }
     }
   },
 };
@@ -770,11 +787,13 @@ function terminarJogo(motivo = "vidas") {
   clearInterval(estado.loop);
   gameMusic.pause();
   limparPitos();
-  sfx.tocar("fim");
 
   const nivel = estado.nivelAtual + 1;
   const recordAnterior = lerNumero("recordPito");
   const novoRecord = estado.pontos > recordAnterior;
+  sfx.tocar("fim");
+  const sessaoFim = estado.sessao;
+  if (novoRecord) setTimeout(() => { if (sessaoFim === estado.sessao) sfx.tocar("recorde"); }, 2300);
   if (novoRecord) guardarNumero("recordPito", estado.pontos);
   if (nivel > lerNumero("recordNivelPito")) guardarNumero("recordNivelPito", nivel);
   const record = novoRecord ? estado.pontos : recordAnterior;
