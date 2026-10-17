@@ -291,7 +291,7 @@ function startGame() {
 
   iniciarNivel();
   const sessao = estado.sessao;
-  mostrarTransicaoNivel(1, estado.meta, () => {
+  mostrarTransicaoNivel(1, estado.meta, 0, () => {
     if (sessao !== estado.sessao || !estado.jogoAtivo) return;
     estado.nivelEmTransicao = false;
   });
@@ -322,15 +322,27 @@ function terminarNivel() {
     terminarJogo("meta");
     return;
   }
+  avancarNivel();
+}
 
+// Passa ao nível seguinte. Chamado logo que a meta é atingida (sem esperar
+// pelo fim do tempo); o tempo que sobra dá pontos de bónus (só para o total,
+// não conta para a meta).
+function avancarNivel() {
+  if (estado.nivelEmTransicao) return;
   estado.nivelEmTransicao = true;
+  const segundos = Math.floor(Math.max(0, estado.tempoMs) / 1000);
+  const bonus = segundos * BONUS_SEGUNDO;
+  estado.pontos += bonus;
+  estado.tempoMs = 0;
+  atualizarHUD(true);
   limparPitos();
   sfx.tocar("nivel");
   vibrar([30, 40, 30]);
 
   const sessao = estado.sessao;
   const proximo = estado.nivelAtual + 1;
-  mostrarTransicaoNivel(proximo + 1, metaNivel(proximo), () => {
+  mostrarTransicaoNivel(proximo + 1, metaNivel(proximo), bonus, () => {
     if (sessao !== estado.sessao || !estado.jogoAtivo) return;
     estado.nivelAtual = proximo;
     estado.nivelEmTransicao = false;
@@ -338,10 +350,11 @@ function terminarNivel() {
   });
 }
 
-function mostrarTransicaoNivel(numNivel, meta, callback) {
+function mostrarTransicaoNivel(numNivel, meta, bonus, callback) {
   const overlay = $("nivelOverlay");
   $("nivelTexto").innerText = "NÍVEL " + numNivel + "!";
-  $("nivelSub").innerText   = "Meta: " + meta + " pontos";
+  $("nivelSub").innerText   =
+    (bonus > 0 ? "Bónus de tempo: +" + bonus + "\n" : "") + "Meta: " + meta + " pontos";
   overlay.style.display = "flex";
   overlay.classList.remove("a-sair-nivel");
   overlay.classList.add("a-entrar-nivel");
@@ -623,10 +636,8 @@ function piscarVermelho() {
 function verificarMeta() {
   if (estado.metaAtingida || estado.pontosNivel < estado.meta) return;
   estado.metaAtingida = true;
-  mostrarMensagem("✓ META ATINGIDA!");
-  sfx.tocar("combo");
-  vibrar([20, 30, 20, 30, 60]);
   atualizarHUD(true);
+  avancarNivel();   // meta cumprida: passa já ao nível seguinte
 }
 
 // ─── HUD ──────────────────────────────────────────────────────────────────────

@@ -434,6 +434,7 @@ body {
   color: #fff3d1;
   text-shadow: 2px 2px 6px #000;
   display: block;
+  white-space: pre-line;
 }
 
 .a-entrar-nivel {
