@@ -64,9 +64,14 @@
     <div id="nivelOverlay" style="display:none;">
       <div id="nivelBox">
         <span id="nivelTexto">NÍVEL 2!</span>
+        <span id="nivelSub"></span>
       </div>
     </div>
     <div id="combo"></div>
+    <div id="metaBar">
+      <div id="metaFill"></div>
+      <span id="metaTexto">META</span>
+    </div>
     <div id="mensagem"></div>
     <div id="flash"></div>
 
@@ -85,6 +90,7 @@
     <div id="gameOverBox">
       <h1 id="gameOverTitulo">FIM DO JOGO!</h1>
       <strong><span id="finalScore">0</span> pts</strong>
+      <p id="motivoTexto"></p>
       <p id="recordTexto"></p>
       <p id="detalheTexto"></p>
       <button onclick="jogarDeNovo()">Jogar de novo</button>
@@ -93,6 +99,7 @@
   </div>
 
 </div><!-- /#wrapper -->
+<script src="balanco.js"></script>
 <script src="script.js"></script>
 <script>
   if ("serviceWorker" in navigator) {

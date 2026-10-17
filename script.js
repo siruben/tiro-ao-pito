@@ -21,28 +21,7 @@ const ESPECIAIS = {
   coracao: { base: 3, pontos: 10, cor: "#ff6b8a", selo: "❤️", vida: 1.2 },
 };
 
-// ─── NÍVEIS ───────────────────────────────────────────────────────────────────
-// Os 3 primeiros são fixos; a partir do 4.º o jogo continua, cada vez mais rápido.
-const NIVEIS = [
-  { intervalo: 900, maxPitos: 2, duracao: 30, tempoVida: 2000 },
-  { intervalo: 600, maxPitos: 3, duracao: 30, tempoVida: 1500 },
-  { intervalo: 380, maxPitos: 4, duracao: 30, tempoVida: 1000 },
-];
-
-function configNivel(i) {
-  if (i < NIVEIS.length) return NIVEIS[i];
-  const extra = i - NIVEIS.length + 1;
-  return {
-    intervalo: Math.max(240, 380 - 25 * extra),
-    maxPitos: 5,
-    duracao: 30,
-    tempoVida: Math.max(650, 1000 - 50 * extra),
-  };
-}
-
-const VIDAS_MAX   = 5;
-const COMBO_PASSO = 5;   // de 5 em 5 acertos seguidos sobe o multiplicador
-const MULT_MAX    = 5;
+// Níveis, metas, vidas e combos estão em balanco.js (carregado antes deste ficheiro).
 
 // pré-carrega os desenhos para os pitos aparecerem logo, sem falhas
 PITOS.forEach((p) => { const i = new Image(); i.src = p.img; });
@@ -58,7 +37,10 @@ const SLOTS = [
 
 // ─── ESTADO ───────────────────────────────────────────────────────────────────
 const estado = {
-  pontos: 0,
+  pontos: 0,              // total da partida (conta para o recorde)
+  pontosNivel: 0,         // pontos feitos neste nível (contam para a meta)
+  meta: 0,                // meta de pontos do nível atual
+  metaAtingida: false,
   tempoMs: 0,
   nivelAtual: 0,
   vidas: VIDAS_MAX,
@@ -301,13 +283,18 @@ function startGame() {
   estado.melhorCombo = 0;
   estado.jogoAtivo = true;
   estado.pausado = false;
-  estado.nivelEmTransicao = false;
+  estado.nivelEmTransicao = true;        // o jogo só começa depois de mostrar a meta
   estado.msJogo = 0;
   estado.ultimoEspecial = -99999;
   estado.pitosCriados = 0;
   limparPitos();
 
   iniciarNivel();
+  const sessao = estado.sessao;
+  mostrarTransicaoNivel(1, estado.meta, () => {
+    if (sessao !== estado.sessao || !estado.jogoAtivo) return;
+    estado.nivelEmTransicao = false;
+  });
   clearInterval(estado.loop);
   estado.ultimoTick = performance.now();
   estado.loop = setInterval(tick, 50);
@@ -321,12 +308,21 @@ function jogarDeNovo() {
 function iniciarNivel() {
   const cfg = configNivel(estado.nivelAtual);
   estado.tempoMs = cfg.duracao * 1000;
+  estado.meta = metaNivel(estado.nivelAtual);
+  estado.pontosNivel = 0;
+  estado.metaAtingida = false;
   estado.proximoSpawn = 0;      // o primeiro pito aparece logo no próximo ciclo
   limparPitos();
   atualizarHUD();
 }
 
 function terminarNivel() {
+  // sem a meta de pontos deste nível, o jogo acaba
+  if (estado.pontosNivel < estado.meta) {
+    terminarJogo("meta");
+    return;
+  }
+
   estado.nivelEmTransicao = true;
   limparPitos();
   sfx.tocar("nivel");
@@ -334,7 +330,7 @@ function terminarNivel() {
 
   const sessao = estado.sessao;
   const proximo = estado.nivelAtual + 1;
-  mostrarTransicaoNivel(proximo + 1, () => {
+  mostrarTransicaoNivel(proximo + 1, metaNivel(proximo), () => {
     if (sessao !== estado.sessao || !estado.jogoAtivo) return;
     estado.nivelAtual = proximo;
     estado.nivelEmTransicao = false;
@@ -342,9 +338,10 @@ function terminarNivel() {
   });
 }
 
-function mostrarTransicaoNivel(numNivel, callback) {
+function mostrarTransicaoNivel(numNivel, meta, callback) {
   const overlay = $("nivelOverlay");
   $("nivelTexto").innerText = "NÍVEL " + numNivel + "!";
+  $("nivelSub").innerText   = "Meta: " + meta + " pontos";
   overlay.style.display = "flex";
   overlay.classList.remove("a-sair-nivel");
   overlay.classList.add("a-entrar-nivel");
@@ -478,6 +475,7 @@ function acertarPito(pito) {
   const mult = multiplicador();
   const valor = pito.tipo.pontos * mult;
   estado.pontos += valor;
+  estado.pontosNivel += valor;
 
   // efeitos do tipo
   let extra = "";
@@ -517,6 +515,7 @@ function acertarPito(pito) {
   abanar(false);
   removerDepois(pito, "acertado", 180);
   atualizarHUD(true);
+  verificarMeta();
 }
 
 function acertarOlho(pito) {
@@ -526,6 +525,7 @@ function acertarOlho(pito) {
   estado.vidas--;
   estado.combo = 0;
   estado.pontos -= pito.tipo.pontos;
+  estado.pontosNivel -= pito.tipo.pontos;
   sfx.tocar("olho");
   vibrar([60, 40, 120]);
   mostrarPontosVoadores(pito, -pito.tipo.pontos, 1, "");
@@ -619,6 +619,16 @@ function piscarVermelho() {
   f.classList.add("ativo");
 }
 
+// ─── META ─────────────────────────────────────────────────────────────────────
+function verificarMeta() {
+  if (estado.metaAtingida || estado.pontosNivel < estado.meta) return;
+  estado.metaAtingida = true;
+  mostrarMensagem("✓ META ATINGIDA!");
+  sfx.tocar("combo");
+  vibrar([20, 30, 20, 30, 60]);
+  atualizarHUD(true);
+}
+
 // ─── HUD ──────────────────────────────────────────────────────────────────────
 const hudCache = {};
 function definir(id, valor) {
@@ -632,6 +642,15 @@ function atualizarHUD(forcar = false) {
   definir("time",  Math.max(0, Math.ceil(estado.tempoMs / 1000)));
   definir("nivel", estado.nivelAtual + 1);
   definir("vidas", "🐣".repeat(Math.max(0, estado.vidas)));
+
+  // barra da meta do nível
+  const feito = Math.max(0, estado.pontosNivel);
+  const frac = estado.meta > 0 ? Math.min(1, feito / estado.meta) : 0;
+  definir("metaTexto", estado.metaAtingida
+    ? "✓ META ATINGIDA"
+    : "META " + feito + " / " + estado.meta);
+  $("metaFill").style.width = (frac * 100).toFixed(1) + "%";
+  $("metaBar").classList.toggle("ok", estado.metaAtingida);
 
   const mult = multiplicador();
   const combo = $("combo");
@@ -662,24 +681,26 @@ function mostrarMensagem(texto) {
 }
 
 // ─── RECORDE ──────────────────────────────────────────────────────────────────
-function lerRecord() {
-  try { return parseInt(localStorage.getItem("recordPito") || "0", 10) || 0; }
+function lerNumero(chave) {
+  try { return parseInt(localStorage.getItem(chave) || "0", 10) || 0; }
   catch (e) { return 0; }
 }
 
-function guardarRecord(v) {
-  try { localStorage.setItem("recordPito", String(v)); } catch (e) { /* sem armazenamento */ }
+function guardarNumero(chave, v) {
+  try { localStorage.setItem(chave, String(v)); } catch (e) { /* sem armazenamento */ }
 }
 
 function atualizarRecordMenu() {
-  const r = lerRecord();
+  const pts = lerNumero("recordPito");
+  const niv = lerNumero("recordNivelPito");
   const el = $("recordMenu");
   if (!el) return;
-  el.innerText = r > 0 ? "🏆 Recorde: " + r + " pts" : "";
+  el.innerText = pts > 0 ? "🏆 Recorde: " + pts + " pts  ·  Nível " + Math.max(niv, 1) : "";
 }
 
 // ─── FIM DO JOGO ──────────────────────────────────────────────────────────────
-function terminarJogo() {
+// motivo: "meta" (não chegou aos pontos do nível) ou "vidas" (acabaram as vidas)
+function terminarJogo(motivo = "vidas") {
   if (!estado.jogoAtivo) return;           // evita chamadas duplicadas
   estado.jogoAtivo = false;
   estado.sessao++;
@@ -688,15 +709,20 @@ function terminarJogo() {
   limparPitos();
   sfx.tocar("fim");
 
-  const recordAnterior = lerRecord();
+  const nivel = estado.nivelAtual + 1;
+  const recordAnterior = lerNumero("recordPito");
   const novoRecord = estado.pontos > recordAnterior;
-  if (novoRecord) guardarRecord(estado.pontos);
+  if (novoRecord) guardarNumero("recordPito", estado.pontos);
+  if (nivel > lerNumero("recordNivelPito")) guardarNumero("recordNivelPito", nivel);
   const record = novoRecord ? estado.pontos : recordAnterior;
 
   $("finalScore").innerText     = estado.pontos;
-  $("gameOverTitulo").innerText = "GAME OVER!";
+  $("gameOverTitulo").innerText = motivo === "meta" ? "META FALHADA!" : "GAME OVER!";
+  $("motivoTexto").innerText    = motivo === "meta"
+    ? "Nível " + nivel + ": fizeste " + Math.max(0, estado.pontosNivel) + " de " + estado.meta + " pontos"
+    : "Ficaste sem vidas no nível " + nivel;
   $("recordTexto").innerText    = novoRecord ? "🏆 Novo recorde!" : "🏆 Recorde: " + record + " pts";
-  $("detalheTexto").innerText   = "Nível " + (estado.nivelAtual + 1) + "  ·  Melhor combo " + estado.melhorCombo;
+  $("detalheTexto").innerText   = "Nível " + nivel + "  ·  Melhor combo " + estado.melhorCombo;
 
   $("game").style.display     = "none";
   $("gameOver").style.display = "flex";
