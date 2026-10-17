@@ -28,7 +28,8 @@
 
     <!-- Recorde e botão jogar -->
     <div id="recordMenu"></div>
-    <button id="btnJogar" onclick="startGame()">JOGAR</button>
+    <button id="btnJogar" onclick="jogarOuAjuda()">JOGAR</button>
+    <button id="btnAjuda" onclick="abrirAjuda(false)" aria-label="Como jogar">? Como jogar</button>
 
   </div>
 
@@ -82,6 +83,29 @@
         <button onclick="retomar()">Continuar</button>
         <button class="secundario" onclick="sairParaMenu()">Menu</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ── COMO JOGAR ────────────────────────────────────────────────────────── -->
+  <div id="ajuda" style="display:none;">
+    <div id="ajudaBox">
+      <h1>COMO JOGAR</h1>
+      <p class="aj-texto">Toca nos pitos para os acertares. Cuidado: <b>acertar no olho</b> tira-te uma vida, os pontos desse pito e o combo!</p>
+
+      <h2>Pitos e pontos</h2>
+      <div id="ajPitos" class="aj-grelha"></div>
+
+      <h2>Pitos especiais</h2>
+      <div id="ajEspeciais" class="aj-lista"></div>
+
+      <h2>Regras</h2>
+      <ul class="aj-regras">
+        <li><b>Combo:</b> 5 acertos seguidos sobem o multiplicador (x2, x3… até x5). Se um pito fugir, o combo perde-se.</li>
+        <li><b>Meta:</b> cada nível tem uma meta de pontos. Atinge-a e passas logo ao próximo!</li>
+        <li><b>Bónus:</b> cada segundo que sobrar vale pontos extra.</li>
+        <li>Se o tempo acabar sem a meta, o jogo termina.</li>
+      </ul>
+      <button id="ajudaOk" onclick="fecharAjuda()">Começar!</button>
     </div>
   </div>
 
