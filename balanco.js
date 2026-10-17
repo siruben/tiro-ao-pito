@@ -9,6 +9,7 @@
   B.VIDAS_MAX   = 5;
   B.COMBO_PASSO = 5;   // de 5 em 5 acertos seguidos sobe o multiplicador
   B.MULT_MAX    = 5;
+  B.BONUS_SEGUNDO = 5; // pontos de bónus por cada segundo que sobra ao cumprir a meta
 
   // Os 3 primeiros níveis são fixos; depois a dificuldade sobe até um limite.
   B.NIVEIS = [

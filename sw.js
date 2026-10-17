@@ -1,4 +1,4 @@
-const CACHE = "tiro-ao-pito-v9";
+const CACHE = "tiro-ao-pito-v10";
 // caminhos relativos ao sw.js: funcionam no GitHub Pages e dentro da app Android
 const FICHEIROS = [
   "./",
