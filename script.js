@@ -326,7 +326,6 @@ const DESCRICAO_ESPECIAIS = {
   coracao: () => "+1 vida",
 };
 const NOMES_ESPECIAIS = { dourado: "Dourado", relogio: "Relógio", coracao: "Coração" };
-let ajudaParaJogar = false;
 
 function construirAjuda() {
   const g = $("ajPitos");
@@ -348,25 +347,15 @@ function construirAjuda() {
   });
 }
 
-// parajogar=true: mostrado antes de começar; false: aberto a partir do menu
-function abrirAjuda(parajogar) {
+// só abre quando o jogador carrega no botão "?" do menu
+function abrirAjuda() {
   construirAjuda();
-  ajudaParaJogar = !!parajogar;
-  $("ajudaOk").innerText = parajogar ? "Começar!" : "Fechar";
   $("ajuda").scrollTop = 0;
   $("ajuda").style.display = "flex";
 }
 
 function fecharAjuda() {
   $("ajuda").style.display = "none";
-  guardarNumero("tutorialVisto", 1);
-  if (ajudaParaJogar) { ajudaParaJogar = false; startGame(); }
-}
-
-// na primeira vez, o JOGAR mostra primeiro como se joga
-function jogarOuAjuda() {
-  if (lerNumero("tutorialVisto")) startGame();
-  else { sfx.iniciar(); abrirAjuda(true); }
 }
 
 function jogarDeNovo() {
