@@ -300,6 +300,58 @@ function startGame() {
   estado.loop = setInterval(tick, 50);
 }
 
+// ─── COMO JOGAR ───────────────────────────────────────────────────────────────
+const NOMES_PITOS = { "pito.png": "Pito", "gordo.png": "Gordo", "magro.png": "Magro",
+                      "careca.png": "Careca", "cabeludo.png": "Cabeludo" };
+const DESCRICAO_ESPECIAIS = {
+  dourado: (e) => e.pontos + " pontos! Foge muito depressa",
+  relogio: () => "+5 segundos no tempo do nível",
+  coracao: () => "+1 vida",
+};
+const NOMES_ESPECIAIS = { dourado: "Dourado", relogio: "Relógio", coracao: "Coração" };
+let ajudaParaJogar = false;
+
+function construirAjuda() {
+  const g = $("ajPitos");
+  if (g.childElementCount) return;
+  PITOS.forEach((p) => {
+    const d = document.createElement("div");
+    d.className = "aj-item";
+    d.innerHTML = '<img alt="" src="' + p.img + '"><b>' + NOMES_PITOS[p.img] + '</b><span>' + p.pontos + ' pts</span>';
+    g.appendChild(d);
+  });
+  const l = $("ajEspeciais");
+  Object.keys(ESPECIAIS).forEach((nome) => {
+    const e = ESPECIAIS[nome];
+    const d = document.createElement("div");
+    d.className = "aj-linha";
+    d.innerHTML = '<span class="aj-selo">' + e.selo + '</span><b>' + NOMES_ESPECIAIS[nome] + '</b><span>' +
+                  DESCRICAO_ESPECIAIS[nome](e) + '</span>';
+    l.appendChild(d);
+  });
+}
+
+// parajogar=true: mostrado antes de começar; false: aberto a partir do menu
+function abrirAjuda(parajogar) {
+  construirAjuda();
+  ajudaParaJogar = !!parajogar;
+  $("ajudaOk").innerText = parajogar ? "Começar!" : "Fechar";
+  $("ajuda").scrollTop = 0;
+  $("ajuda").style.display = "flex";
+}
+
+function fecharAjuda() {
+  $("ajuda").style.display = "none";
+  guardarNumero("tutorialVisto", 1);
+  if (ajudaParaJogar) { ajudaParaJogar = false; startGame(); }
+}
+
+// na primeira vez, o JOGAR mostra primeiro como se joga
+function jogarOuAjuda() {
+  if (lerNumero("tutorialVisto")) startGame();
+  else { sfx.iniciar(); abrirAjuda(true); }
+}
+
 function jogarDeNovo() {
   startGame();
 }
