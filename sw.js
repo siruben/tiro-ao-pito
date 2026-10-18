@@ -1,4 +1,4 @@
-const CACHE = "tiro-ao-pito-v14";
+const CACHE = "tiro-ao-pito-v15";
 // caminhos relativos ao sw.js: funcionam no GitHub Pages e dentro da app Android
 const FICHEIROS = [
   "./",
@@ -19,9 +19,17 @@ const FICHEIROS = [
   "intro.mp3",
   "feira.mp3"
 ];
+// ficheiros opcionais: se ainda não existirem, não impedem a instalação
+const OPCIONAIS = ["gameover1.mp3", "gameover2.mp3"];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FICHEIROS)));
+  e.waitUntil(
+    caches.open(CACHE).then(cache =>
+      cache.addAll(FICHEIROS).then(() =>
+        Promise.all(OPCIONAIS.map(f => cache.add(f).catch(() => {})))
+      )
+    )
+  );
   self.skipWaiting();
 });
 

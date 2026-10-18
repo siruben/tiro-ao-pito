@@ -68,10 +68,43 @@ let somAtivo = true;
 
 introMusic.volume = 0.6;
 
+// ─── MÚSICAS DE GAME OVER ─────────────────────────────────────────────────────
+// Ficheiros opcionais: tocam à vez, uma por cada game over. Se nenhum existir,
+// usa-se o som sintetizado, para o jogo nunca ficar em silêncio.
+const MUSICAS_GAMEOVER = ["gameover1.mp3", "gameover2.mp3"].map((src) => {
+  const a = new Audio();
+  a.preload = "auto";
+  a.volume = 0.7;
+  a.dataset.ok = "1";
+  a.addEventListener("error", () => { a.dataset.ok = "0"; });
+  a.src = src;
+  return a;
+});
+let proximaMusicaGameOver = 0;
+
+function pararMusicaGameOver() {
+  MUSICAS_GAMEOVER.forEach((a) => { a.pause(); a.currentTime = 0; });
+}
+
+// devolve true se tocou alguma música
+function tocarMusicaGameOver() {
+  pararMusicaGameOver();
+  for (let i = 0; i < MUSICAS_GAMEOVER.length; i++) {
+    const a = MUSICAS_GAMEOVER[(proximaMusicaGameOver + i) % MUSICAS_GAMEOVER.length];
+    if (a.dataset.ok !== "1") continue;
+    proximaMusicaGameOver = (proximaMusicaGameOver + i + 1) % MUSICAS_GAMEOVER.length;
+    a.muted = !somAtivo;
+    a.play().catch(() => {});
+    return true;
+  }
+  return false;
+}
+
 function toggleSom() {
   somAtivo = !somAtivo;
   introMusic.muted = !somAtivo;
   gameMusic.muted  = !somAtivo;
+  MUSICAS_GAMEOVER.forEach((a) => { a.muted = !somAtivo; });
   sfx.definirMudo(!somAtivo);
   $("btnSom").innerText = somAtivo ? "🔊" : "🔇";
 }
@@ -211,14 +244,6 @@ const sfx = {
         [[98, 0], [147, 0.32], [98, 0.64], [82, 0.96]].forEach(([f, a]) => this.tom(f, 0.22, "square", 0.08, a));
         break;
       }
-      case "recorde": {
-        // fanfarra curta para um novo recorde
-        [523, 659, 784, 1047].forEach((f, i) => this.tom(f, 0.18, "triangle", 0.22, i * 0.13));
-        this.tom(1047, 0.7, "triangle", 0.22, 0.55);
-        this.tom(784, 0.7, "triangle", 0.14, 0.55);
-        this.tom(523, 0.7, "triangle", 0.14, 0.55);
-        break;
-      }
     }
   },
 };
@@ -249,6 +274,7 @@ function retomar() {
 }
 
 function sairParaMenu() {
+  pararMusicaGameOver();
   estado.sessao++;
   estado.jogoAtivo = false;
   estado.pausado = false;
@@ -270,6 +296,7 @@ function sairParaMenu() {
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     introMusic.pause();
+    pararMusicaGameOver();
     gameMusic.pause();
     pausar();
   } else if (!estado.jogoAtivo && $("menu").style.display === "block") {
@@ -280,6 +307,7 @@ document.addEventListener("visibilitychange", () => {
 // ─── INÍCIO DO JOGO ───────────────────────────────────────────────────────────
 function startGame() {
   sfx.iniciar();
+  pararMusicaGameOver();
   $("menu").style.display = "none";
   $("gameOver").style.display = "none";
   $("pausaOverlay").style.display = "none";
@@ -780,9 +808,7 @@ function terminarJogo(motivo = "vidas") {
   const nivel = estado.nivelAtual + 1;
   const recordAnterior = lerNumero("recordPito");
   const novoRecord = estado.pontos > recordAnterior;
-  sfx.tocar("fim");
-  const sessaoFim = estado.sessao;
-  if (novoRecord) setTimeout(() => { if (sessaoFim === estado.sessao) sfx.tocar("recorde"); }, 2300);
+  if (!tocarMusicaGameOver()) sfx.tocar("fim");
   if (novoRecord) guardarNumero("recordPito", estado.pontos);
   if (nivel > lerNumero("recordNivelPito")) guardarNumero("recordNivelPito", nivel);
   const record = novoRecord ? estado.pontos : recordAnterior;
