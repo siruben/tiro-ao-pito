@@ -301,13 +301,6 @@ body {
 .menu-pito:nth-of-type(4) { animation-delay: 0.3s; }
 .menu-pito:nth-of-type(5) { animation-delay: 0.4s; }
 
-/* ─── BADGES DE NOME NO MENU ────────────────────────────────────────────────── */
-.menu-badge {
-  display: none;
-}
-
-#credito { display: none; }
-
 /* ─── SPLASH DO CRIADOR ──────────────────────────────────────────────────────────── */
 #splash {
   position: absolute;

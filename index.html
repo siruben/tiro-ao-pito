@@ -129,14 +129,20 @@
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
-  setTimeout(() => {
+  // o splash fecha sozinho aos 5 s, ou logo que o jogador tocar
+  let splashFechado = false;
+  function fecharSplash() {
+    if (splashFechado) return;
+    splashFechado = true;
     const splash = document.getElementById("splash");
     splash.classList.add("splash-ocultar");
     setTimeout(() => {
       splash.style.display = "none";
       document.getElementById("menu").style.display = "block";
     }, 600);
-  }, 5000);
+  }
+  document.getElementById("splash").addEventListener("pointerdown", fecharSplash);
+  setTimeout(fecharSplash, 5000);
 </script>
 </body>
 </html>
