@@ -91,7 +91,7 @@ function jogarNivel(jogo, i, P, rng) {
     jogo.combo++;
     const valor = p.tipo.pontos * mult();
     pontosNivel += valor;
-    if (p.tipo.especial === "relogio") tempo = Math.min(cfg.duracao * 1000, tempo + 5000);
+    if (p.tipo.especial === "relogio") tempo += 5000;
     if (p.tipo.especial === "coracao" && jogo.vidas < B.VIDAS_MAX) jogo.vidas++;
   }
   function olho(p) {

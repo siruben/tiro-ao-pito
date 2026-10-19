@@ -11,10 +11,13 @@
   B.MULT_MAX    = 5;
   B.BONUS_SEGUNDO = 5; // pontos de bónus por cada segundo que sobra ao cumprir a meta
 
-  // Os 3 primeiros níveis são fixos; depois a dificuldade sobe até um limite.
+  // Os 5 primeiros níveis são fixos e sobem de forma gradual; depois a
+  // dificuldade continua a subir até um limite.
   B.NIVEIS = [
     { intervalo: 900, maxPitos: 2, duracao: 30, tempoVida: 2000 },
-    { intervalo: 600, maxPitos: 3, duracao: 30, tempoVida: 1500 },
+    { intervalo: 700, maxPitos: 3, duracao: 30, tempoVida: 1700 },
+    { intervalo: 550, maxPitos: 3, duracao: 30, tempoVida: 1450 },
+    { intervalo: 450, maxPitos: 4, duracao: 30, tempoVida: 1200 },
     { intervalo: 380, maxPitos: 4, duracao: 30, tempoVida: 1000 },
   ];
 

@@ -124,11 +124,10 @@ window.addEventListener("load", tocarIntro);
 document.addEventListener("pointerdown", tocarIntro);
 document.addEventListener("keydown", tocarIntro);
 
-// ─── ÁUDIO: EFEITOS (sintetizados; o tiro.mp3 é opcional) ─────────────────────
+// ─── ÁUDIO: EFEITOS (todos sintetizados, sem ficheiros) ───────────────────────
 const sfx = {
   ctx: null,
   master: null,
-  tiroBuf: null,
   mudo: false,
 
   iniciar() {
@@ -142,12 +141,6 @@ const sfx = {
     this.master = this.ctx.createGain();
     this.master.gain.value = this.mudo ? 0 : 1;
     this.master.connect(this.ctx.destination);
-    // Se existir um tiro.mp3 a sério, é usado no lugar do som sintetizado
-    fetch("tiro.mp3")
-      .then((r) => (r.ok ? r.arrayBuffer() : null))
-      .then((b) => (b && b.byteLength > 1000 ? this.ctx.decodeAudioData(b) : null))
-      .then((buf) => { this.tiroBuf = buf; })
-      .catch(() => {});
   },
 
   definirMudo(m) {
@@ -194,15 +187,8 @@ const sfx = {
     if (!this.ctx || this.mudo) return;
     switch (nome) {
       case "acerto":
-        if (this.tiroBuf) {
-          const s = this.ctx.createBufferSource();
-          s.buffer = this.tiroBuf;
-          s.connect(this.master);
-          s.start();
-        } else {
-          this.ruido(0.11, 0.45, 1800);
-          this.tom(240, 0.12, "triangle", 0.3, 0, 70);
-        }
+        this.ruido(0.11, 0.45, 1800);
+        this.tom(240, 0.12, "triangle", 0.3, 0, 70);
         // sobe ligeiramente com o combo
         if (extra > 0) this.tom(520 + extra * 90, 0.07, "square", 0.06, 0.03);
         break;
@@ -580,8 +566,7 @@ function acertarPito(pito) {
   let extra = "";
   switch (pito.tipo.especial) {
     case "relogio": {
-      const cfg = configNivel(estado.nivelAtual);
-      estado.tempoMs = Math.min(cfg.duracao * 1000, estado.tempoMs + 5000);
+      estado.tempoMs += 5000;      // sem limite: vale sempre os 5 segundos prometidos
       extra = "+5s";
       sfx.tocar("relogio");
       break;
@@ -636,6 +621,9 @@ function acertarOlho(pito) {
   atualizarHUD(true);
 
   if (estado.vidas <= 0) {
+    // congela já o jogo: durante a pausa dramática não se pode atingir a meta
+    // nem acabar o tempo, que mudariam o desfecho
+    estado.nivelEmTransicao = true;
     const sessao = estado.sessao;
     setTimeout(() => { if (sessao === estado.sessao) terminarJogo(); }, 450);
   }
